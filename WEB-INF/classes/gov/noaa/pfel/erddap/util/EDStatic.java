@@ -1,4 +1,4 @@
-/* 
+/*
  * EDStatic Copyright 2008, NOAA.
  * See the LICENSE.txt file in this file's directory.
  */
@@ -86,11 +86,11 @@ import ucar.nc2.Group;
 import ucar.nc2.NetcdfFileWriter;
 import ucar.nc2.Variable;
 
-/** 
+/**
  * This class holds a lot of static information set from the setup.xml and messages.xml
- * files and used by all the other ERDDAP classes. 
+ * files and used by all the other ERDDAP classes.
  */
-public class EDStatic { 
+public class EDStatic {
 
     /** The all lowercase name for the program that appears in urls. */
     public final static String programname = "erddap";
@@ -98,7 +98,7 @@ public class EDStatic {
     /** The uppercase name for the program that appears on web pages. */
     public final static String ProgramName = "ERDDAP";
 
-    /** This changes with each release. 
+    /** This changes with each release.
      * <br>See Changes information in /downloads/setup.html .
      * <br>0.1 started on 2007-09-17
      * <br>0.11 released on 2007-11-09
@@ -155,35 +155,35 @@ public class EDStatic {
      * <br>1.82 released on 2018-01-26
      *
      * For master branch releases, this will be a floating point
-     * number with 2 decimal digits, with no additional text. 
-     * !!! People other than the main ERDDAP developer (Bob) 
+     * number with 2 decimal digits, with no additional text.
+     * !!! People other than the main ERDDAP developer (Bob)
      * should not change the *number* below.
-     * If you need to identify a fork of ERDDAP, please append "_" + other 
+     * If you need to identify a fork of ERDDAP, please append "_" + other
      * ASCII text (no spaces or control characters) to the number below,
      * e.g., "1.82_MyFork".
-     * In a few places in ERDDAP, this string is parsed as a number. 
+     * In a few places in ERDDAP, this string is parsed as a number.
      * The parser now disregards "_" and anything following it.
      * A request to http.../erddap/version will return just the number (as text).
      * A request to http.../erddap/version_string will return the full string.
-     */   
+     */
     public static String erddapVersion = "1.82"; //see comment above
 
-    /** 
-     * This is almost always false.  
-     * During development, Bob sets this to true. No one else needs to. 
-     * If true, ERDDAP uses setup2.xml and datasets2.xml (and messages2.xml if it exists). 
+    /**
+     * This is almost always false.
+     * During development, Bob sets this to true. No one else needs to.
+     * If true, ERDDAP uses setup2.xml and datasets2.xml (and messages2.xml if it exists).
      */
 public static boolean developmentMode = false;
 
     /** This identifies the dods server/version that this mimics. */
-    public static String dapVersion = "DAP/2.0";   
+    public static String dapVersion = "DAP/2.0";
     public static String serverVersion = "dods/3.7"; //this is what thredds replies
       //drds at https://oceanwatch.pfeg.noaa.gov/opendap/GLOBEC/GLOBEC_bottle.ver replies "DODS/3.2"
       //both reply with server version, neither replies with coreVersion
       //spec says #.#.#, but Gallagher says #.# is fine.
 
-    /** 
-     * contentDirectory is the local directory on this computer, e.g., [tomcat]/content/erddap/ 
+    /**
+     * contentDirectory is the local directory on this computer, e.g., [tomcat]/content/erddap/
      * It will have a slash at the end.
      */
     public static String contentDirectory;
@@ -198,7 +198,7 @@ public static boolean developmentMode = false;
     public final static String iso19115XmlDirectory = "metadata/iso19115/xml/"; //virtual
     public final static String DOWNLOAD_DIR         = "download/";
     public final static String IMAGES_DIR           = "images/";
-    public final static String PUBLIC_DIR           = "public/"; 
+    public final static String PUBLIC_DIR           = "public/";
     public static String
         fullPaletteDirectory = contextDirectory + "WEB-INF/cptfiles/",
         fullPublicDirectory  = contextDirectory + PUBLIC_DIR,
@@ -227,69 +227,69 @@ public static boolean developmentMode = false;
     public static volatile int slowDownTroubleMillis = 1000;
     public static long startupMillis = System.currentTimeMillis();
     public static String startupLocalDateTime = Calendar2.getCurrentISODateTimeStringLocalTZ();
-    public static int nGridDatasets = 0;  
+    public static int nGridDatasets = 0;
     public static int nTableDatasets = 0;
     public static long lastMajorLoadDatasetsStartTimeMillis = System.currentTimeMillis();
     public static long lastMajorLoadDatasetsStopTimeMillis = System.currentTimeMillis() - 1;
     private static ConcurrentHashMap<String,String> sessionNonce = new ConcurrentHashMap(16, 0.75f, 4); //for a session: loggedInAs -> nonce
 
-    /** userHashMap. 
-     * key=username (if email address, they are lowercased) 
-     * value=[encoded password, sorted roles String[]] 
+    /** userHashMap.
+     * key=username (if email address, they are lowercased)
+     * value=[encoded password, sorted roles String[]]
      * It is empty until the first LoadDatasets is finished and puts a new HashMap in place.
      * It is private so no other code can access the information except
      * via doesPasswordMatch() and getRoles().
      * MD5'd and SHA'd passwords should all already be lowercase.
      * No need to be thread-safe: one thread writes it, then put here where read only.
      */
-    private static HashMap userHashMap = new HashMap(); 
+    private static HashMap userHashMap = new HashMap();
 
     /** This is a HashMap of key=id value=thread that need to be interrupted/killed
      * when erddap is stopped in Tomcat.
      * For example, key="taskThread", value=taskThread.
      * The key make it easy to get a specific thread (e.g., to remove it).
      */
-    public static ConcurrentHashMap runningThreads = new ConcurrentHashMap(16, 0.75f, 4); 
+    public static ConcurrentHashMap runningThreads = new ConcurrentHashMap(16, 0.75f, 4);
 
     //taskThread variables
     //Funnelling all taskThread tasks through one taskThread ensures
     //  that the memory requirements, bandwidth usage, cpu usage,
-    //  and stress on remote servers will be minimal 
+    //  and stress on remote servers will be minimal
     //  (although at the cost of not doing the tasks faster / in parallel).
     //In a grid of erddaps, each will have its own taskThread, which is appropriate.
     public static ArrayList taskList = new ArrayList(); //keep here in case TaskThread needs to be restarted
     private static TaskThread taskThread;
-    /** lastAssignedTask is used by EDDxxxCopy instances to keep track of 
+    /** lastAssignedTask is used by EDDxxxCopy instances to keep track of
      * the number of the last task assigned to taskThread.
      * key=datasetID value=Integer(task#)
      */
-    public static ConcurrentHashMap lastAssignedTask = new ConcurrentHashMap(16, 0.75f, 4); 
-    /** 
+    public static ConcurrentHashMap lastAssignedTask = new ConcurrentHashMap(16, 0.75f, 4);
+    /**
      * This returns the index number of the task in taskList (-1,0..) of the last completed task
      * (successful or not).
      * nFinishedTasks = lastFinishedTask + 1;
      */
     public static volatile int lastFinishedTask = -1;
-    /** 
+    /**
      * This returns the index number of the task in taskList (0..) that will be started
      * when the current task is finished.
      */
     public static volatile int nextTask = 0;
 
 
-    /** This recieves key=startOfLocalSourceUrl value=startOfPublicSourceUrl from LoadDatasets 
-     * and is used by EDD.convertToPublicSourceUrl. 
+    /** This recieves key=startOfLocalSourceUrl value=startOfPublicSourceUrl from LoadDatasets
+     * and is used by EDD.convertToPublicSourceUrl.
      */
     public static ConcurrentHashMap convertToPublicSourceUrl = new ConcurrentHashMap(16, 0.75f, 4);
 
-    /** 
+    /**
      * This returns the position of the "/" in if tFrom has "[something]//[something]/...",
      * and is thus a valid tFrom for convertToPublicSourceUrl.
      *
      * @return the po of the end "/" (or -1 if invalid).
      */
     public static int convertToPublicSourceUrlFromSlashPo(String tFrom) {
-        if (tFrom == null) 
+        if (tFrom == null)
             return -1;
         int spo = tFrom.indexOf("//");
         if (spo > 0)
@@ -302,7 +302,7 @@ public static boolean developmentMode = false;
     //Since I recreate the index when erddap restarted, I can change anything
     //  (e.g., Directory type, Version) any time
     //  (no worries about compatibility with existing index).
-    //useful documentatino 
+    //useful documentatino
     //  http://lucene.apache.org/java/3_5_0/queryparsersyntax.html
     //  http://wiki.apache.org/lucene-java/LuceneFAQ
     //  http://wiki.apache.org/lucene-java/BasicsOfPerformance
@@ -315,7 +315,7 @@ public static boolean developmentMode = false;
 
     //made below if useLuceneSearchEngine
     //there are many analyzers; this is a good starting point
-    public  static Analyzer      luceneAnalyzer;    
+    public  static Analyzer      luceneAnalyzer;
     private static QueryParser   luceneQueryParser; //not thread-safe
 
     //made once by RunLoadDatasets
@@ -325,7 +325,7 @@ public static boolean developmentMode = false;
     //made/returned by luceneIndexSearcher
     private static IndexReader   luceneIndexReader; //is thread-safe, but only need/want one
     private static Object        luceneIndexReaderLock = Calendar2.newGCalendarLocal();
-    public  static boolean       needNewLuceneIndexReader = true;  
+    public  static boolean       needNewLuceneIndexReader = true;
     private static IndexSearcher luceneIndexSearcher; //is thread-safe, so can reuse
     private static String[]      luceneDatasetIDFieldCache;
 
@@ -339,25 +339,25 @@ public static boolean developmentMode = false;
     public final static String encodedAllPIppQuery     = "page=1&#x26;itemsPerPage=1000000000";
     public final static String DONT_LOG_THIS_EMAIL     = "!!! DON'T LOG THIS EMAIL: ";
 
-    /** 
-     * These values are loaded from the [contentDirectory]setup.xml file. 
+    /**
+     * These values are loaded from the [contentDirectory]setup.xml file.
      * See comments in the [contentDirectory]setup.xml file.
      */
-    public static String 
+    public static String
         baseUrl,
         baseHttpsUrl, //won't be null, may be "(not specified)"
         bigParentDirectory,
         unitTestDataDir,
         unitTestBigDataDir,
-         
+
         adminInstitution,
         adminInstitutionUrl,
         adminIndividualName,
         adminPosition,
-        adminPhone, 
+        adminPhone,
         adminAddress,
         adminCity,
-        adminStateOrProvince, 
+        adminStateOrProvince,
         adminPostalCode,
         adminCountry,
         adminEmail,
@@ -454,7 +454,7 @@ public static boolean developmentMode = false;
         authentication,  //will be one of "", "custom" ["openid"]. If baseHttpsUrl doesn't start with https:, this will be "".
         datasetsRegex,
         drawLandMask,
-        emailEverythingToCsv, 
+        emailEverythingToCsv,
         emailDailyReportToCsv,
         emailSubscriptionsFrom,
         flagKeyKey,
@@ -462,8 +462,8 @@ public static boolean developmentMode = false;
         googleClientID, //if authentication=google, this will be something
         googleEarthLogoFile,
         highResLogoImageFile,
-        legendTitle1, 
-        legendTitle2, 
+        legendTitle1,
+        legendTitle2,
         lowResLogoImageFile,
         orcidClientID, //if authentication=orcid, this will be something
         passwordEncoding, //will be one of "MD5", "UEPMD5", "SHA256", "UEPSHA256"
@@ -472,7 +472,7 @@ public static boolean developmentMode = false;
         warName;
     public static String ampLoginInfo = "&loginInfo;";
     public static String accessibleViaNC4; //"" if accessible, else message why not
-    public static int 
+    public static int
         lowResLogoImageFileWidth,  lowResLogoImageFileHeight,
         highResLogoImageFileWidth, highResLogoImageFileHeight,
         googleEarthLogoFileWidth,  googleEarthLogoFileHeight;
@@ -480,10 +480,10 @@ public static boolean developmentMode = false;
     private static String legal;
     private static int   ampLoginInfoPo = -1;
     /** These are special because other loggedInAs must be String2.justPrintable
-        loggedInAsHttps is for using https without being logged in, 
+        loggedInAsHttps is for using https without being logged in,
           but &amp;loginInfo; indicates user isn't logged in.
           It is a reserved username -- LoadDatasets prohibits defining a user with that name.
-        Tab is useful here: LoadDatasets prohibits it as valid userName, 
+        Tab is useful here: LoadDatasets prohibits it as valid userName,
           but it won't cause big trouble when printed in tally info.
      */
     public final static String loggedInAsHttps     = "[https]";     //final so not changeable
@@ -491,13 +491,13 @@ public static boolean developmentMode = false;
     public final static int minimumPasswordLength = 8;
     private static String startBodyHtml,  endBodyHtml, startHeadHtml; //see xxx() methods
 
-    public static boolean listPrivateDatasets, 
+    public static boolean listPrivateDatasets,
         reallyVerbose,
         subscriptionSystemActive,  convertersActive, slideSorterActive,
-        fgdcActive, iso19115Active, jsonldActive, geoServicesRestActive, 
-        filesActive, dataProviderFormActive, 
-        outOfDateDatasetsActive, politicalBoundariesActive, 
-        wmsClientActive, 
+        fgdcActive, iso19115Active, jsonldActive, geoServicesRestActive,
+        filesActive, dataProviderFormActive,
+        outOfDateDatasetsActive, politicalBoundariesActive,
+        wmsClientActive,
         sosActive, wcsActive, wmsActive,
         quickRestart, subscribeToRemoteErddapDataset,
         useOriginalSearchEngine, useLuceneSearchEngine,  //exactly one will be true
@@ -507,21 +507,21 @@ public static boolean developmentMode = false;
     public static String  categoryAttributesInURLs[]; //fileNameSafe (as used in URLs)
     public static boolean categoryIsGlobal[];
     public static int variableNameCategoryAttributeIndex = -1;
-    public static int 
+    public static int
         logMaxSizeMB,
         unusualActivity = 10000,
         partialRequestMaxBytes = 490000000, //this is just below tds default <opendap><binLimit> of 500MB
         partialRequestMaxCells = 100000;
     public static long cacheMillis, loadDatasetsMinMillis, loadDatasetsMaxMillis;
     private static String
-        emailSmtpHost, emailUserName, emailFromAddress, emailPassword, emailProperties; 
+        emailSmtpHost, emailUserName, emailFromAddress, emailPassword, emailProperties;
     private static int emailSmtpPort;
     private static String emailLogDate = "";
     private static BufferedWriter emailLogFile;
 
     //these are set as a consequence of setup.xml info
     public static SgtGraph sgtGraph;
-    public static String 
+    public static String
         erddapUrl,  //without slash at end
         erddapHttpsUrl,  //without slash at end   (may be useless, but won't be null)
         preferredErddapUrl,  //without slash at end   (https if avail, else http)
@@ -532,8 +532,8 @@ public static boolean developmentMode = false;
         fullLuceneDirectory,
         fullResetFlagDirectory,
         fullHardFlagDirectory,
-        fullCptCacheDirectory,         
-        fullPlainFileNcCacheDirectory,         
+        fullCptCacheDirectory,
+        fullPlainFileNcCacheDirectory,
         fullSgtMapTopographyCacheDirectory,
         fullTestCacheDirectory,
         fullWmsCacheDirectory,
@@ -547,7 +547,7 @@ public static boolean developmentMode = false;
 
     /** These values are loaded from the [contentDirectory]messages.xml file (if present)
         or .../classes/gov/noaapfel/erddap/util/messages.xml. */
-    public static String 
+    public static String
         addConstraints,
         admKeywords,
         admSubsetVariables,
@@ -646,26 +646,26 @@ public static boolean developmentMode = false;
         clickERDDAP,
         clickInfo,
         clickToSubmit,
-        convertOceanicAtmosphericAcronyms,        
+        convertOceanicAtmosphericAcronyms,
         convertOceanicAtmosphericAcronymsIntro,
         convertOceanicAtmosphericAcronymsNotes,
         convertOceanicAtmosphericAcronymsService,
-        convertOceanicAtmosphericVariableNames,        
+        convertOceanicAtmosphericVariableNames,
         convertOceanicAtmosphericVariableNamesIntro,
         convertOceanicAtmosphericVariableNamesNotes,
         convertOceanicAtmosphericVariableNamesService,
-        convertFipsCounty,        
+        convertFipsCounty,
         convertFipsCountyIntro,
         convertFipsCountyNotes,
         convertFipsCountyService,
         convertHtml,
-        convertKeywords,          
+        convertKeywords,
         convertKeywordsCfTooltip,
         convertKeywordsGcmdTooltip,
         convertKeywordsIntro,
         convertKeywordsNotes,
         convertKeywordsService,
-        convertTime,         
+        convertTime,
         convertTimeBypass,
         convertTimeReference,
         convertTimeIntro,
@@ -683,8 +683,8 @@ public static boolean developmentMode = false;
         convertTimeStringFormatError,
         convertTimeTwoTimeError,
         convertTimeUnitsError,
-        convertUnits,             
-        convertUnitsComparison,   
+        convertUnits,
+        convertUnitsComparison,
         convertUnitsFilter,
         convertUnitsIntro,
         convertUnitsNotes,
@@ -911,9 +911,9 @@ public static boolean developmentMode = false;
         indexDescription,
         indexDatasets,
         indexDocumentation,
-        indexRESTfulSearch,        
-        indexAllDatasetsSearch,        
-        indexOpenSearch,        
+        indexRESTfulSearch,
+        indexAllDatasetsSearch,
+        indexOpenSearch,
         indexServices,
         indexDescribeServices,
         indexMetadata,
@@ -1057,7 +1057,7 @@ public static boolean developmentMode = false;
         magZoomData,
         magZoomOutData,
         magGridTooltip,
-        magTableTooltip,        
+        magTableTooltip,
         metadataDownload,
         moreInformation,
         nMatching1,
@@ -1157,7 +1157,7 @@ public static boolean developmentMode = false;
         queryErrorLastExpected,
         queryErrorLastUnexpected,
         queryErrorLastPMInvalid,
-        queryErrorLastPMInteger,        
+        queryErrorLastPMInteger,
         rangesFromTo,
         resetTheForm,
         resetTheFormWas,
@@ -1172,9 +1172,9 @@ public static boolean developmentMode = false;
         searchTitle,
         searchDoFullTextHtml,
         searchFullTextHtml,
-        searchHintsLuceneTooltip, 
-        searchHintsOriginalTooltip, 
-        searchHintsTooltip, 
+        searchHintsLuceneTooltip,
+        searchHintsOriginalTooltip,
+        searchHintsTooltip,
         searchButton,
         searchClickTip,
         searchNotAvailable,
@@ -1191,7 +1191,7 @@ public static boolean developmentMode = false;
         sparqlP01toP02post,
         ssUse,
         ssUsePlain,
-        ssBePatient, 
+        ssBePatient,
         ssInstructionsHtml,
         standardShortDescriptionHtml,
         standardLicense,
@@ -1203,7 +1203,7 @@ public static boolean developmentMode = false;
         standardPrivacyPolicy,
         statusHtml,
         submit,
-        submitTooltip, 
+        submitTooltip,
         subscriptionsTitle,
         subscriptionAdd,
         subscriptionAddHtml,
@@ -1221,9 +1221,9 @@ public static boolean developmentMode = false;
         subscriptionEmailInvalid,
         subscriptionEmailTooLong,
         subscriptionEmailUnspecified,
-        subscription0Html, 
-        subscription1Html, 
-        subscription2Html, 
+        subscription0Html,
+        subscription1Html,
+        subscription2Html,
         subscriptionIDInvalid,
         subscriptionIDTooLong,
         subscriptionIDUnspecified,
@@ -1238,7 +1238,7 @@ public static boolean developmentMode = false;
         subscriptionsNotAvailable,
         subscriptionUrlHtml,
         subscriptionUrlInvalid,
-        subscriptionUrlTooLong,        
+        subscriptionUrlTooLong,
         subscriptionValidateError,
         subscriptionValidateSuccess,
         subset,
@@ -1283,7 +1283,7 @@ public static boolean developmentMode = false;
         subsetViewDistinctDataTooltip,
         subsetViewRelatedDataCountsTooltip,
         subsetViewRelatedDataTooltip,
-        subsetWarn,                    
+        subsetWarn,
         subsetWarn10000,
         subsetTooltip,
         subsetNotSetUp,
@@ -1310,18 +1310,18 @@ public static boolean developmentMode = false;
         wmsManyDatasets;
 
     public static int[] imageWidths, imageHeights, pdfWidths, pdfHeights;
-    private static String        
+    private static String
         theShortDescriptionHtml, theLongDescriptionHtml; //see the xxx() methods
     public static String errorFromDataSource = String2.ERROR + " from data source: ";
-    
-    /** These are only created/used by GenerateDatasetsXml threads. 
+
+    /** These are only created/used by GenerateDatasetsXml threads.
      *  See the related methods below that create them.
      */
-    private static Table gdxAcronymsTable; 
-    private static HashMap<String,String> gdxAcronymsHashMap, gdxVariableNamesHashMap; 
+    private static Table gdxAcronymsTable;
+    private static HashMap<String,String> gdxAcronymsHashMap, gdxVariableNamesHashMap;
 
     /** This static block reads this class's static String values from
-     * contentDirectory, which must contain setup.xml and datasets.xml 
+     * contentDirectory, which must contain setup.xml and datasets.xml
      * (and may contain messages.xml).
      * It may be a defined environment variable ("erddapContentDirectory")
      * or a subdir of <tomcat> (e.g., usr/local/tomcat/content/erddap/)
@@ -1345,44 +1345,44 @@ public static boolean developmentMode = false;
 
         //**** find contentDirectory
         String ecd = "erddapContentDirectory"; //the name of the environment variable
-        errorInMethod = 
+        errorInMethod =
             "Couldn't find 'content' directory ([tomcat]/content/erddap/ ?) " +
             "because '" + ecd + "' environment variable not found " +
-            "and couldn't find '/webapps/' in classPath=" + 
+            "and couldn't find '/webapps/' in classPath=" +
             String2.getClassPath() + //with / separator and / at the end
             " (and 'content/erddap' should be a sibling of <tomcat>/webapps): ";
-        contentDirectory = System.getProperty(ecd);        
+        contentDirectory = System.getProperty(ecd);
         if (contentDirectory == null) {
             //Or, it must be sibling of webapps
             //e.g., c:/programs/_tomcat/webapps/erddap/WEB-INF/classes/[these classes]
             //On windows, contentDirectory may have spaces as %20(!)
             contentDirectory = String2.replaceAll(
                 String2.getClassPath(), //with / separator and / at the end
-                "%20", " "); 
+                "%20", " ");
             int po = contentDirectory.indexOf("/webapps/");
             contentDirectory = contentDirectory.substring(0, po) + "/content/erddap/"; //exception if po=-1
         } else {
             contentDirectory = File2.addSlash(contentDirectory);
         }
-        Test.ensureTrue(File2.isDirectory(contentDirectory),  
+        Test.ensureTrue(File2.isDirectory(contentDirectory),
             "contentDirectory (" + contentDirectory + ") doesn't exist.");
 
 
         //**** setup.xml *************************************************************
-        //read static Strings from setup.xml 
-        String setupFileName = contentDirectory + 
+        //read static Strings from setup.xml
+        String setupFileName = contentDirectory +
             "setup" + (developmentMode? "2" : "") + ".xml";
         errorInMethod = "ERROR while reading " + setupFileName + ": ";
         ResourceBundle2 setup = ResourceBundle2.fromXml(XML.parseXml(setupFileName, false));
 
         //logLevel may be: warning, info(default), all
-        String logLevel = setup.getString("logLevel", "info").toLowerCase();  
+        String logLevel = setup.getString("logLevel", "info").toLowerCase();
         verbose = !logLevel.equals("warning");
         AxisDataAccessor.verbose = verbose;
         Boundaries.verbose = verbose;
         Calendar2.verbose = verbose;
         EDD.verbose = verbose;
-        EDV.verbose = verbose;      
+        EDV.verbose = verbose;
         Erddap.verbose = verbose;
         File2.verbose = verbose;
         FilledMarkerRenderer.verbose = verbose;
@@ -1426,12 +1426,12 @@ public static boolean developmentMode = false;
         //Table.debug = reallyVerbose; //for debugging
         TaskThread.reallyVerbose = reallyVerbose;
 
-        bigParentDirectory = setup.getNotNothingString("bigParentDirectory", ""); 
+        bigParentDirectory = setup.getNotNothingString("bigParentDirectory", "");
         bigParentDirectory = File2.addSlash(bigParentDirectory);
-        Test.ensureTrue(File2.isDirectory(bigParentDirectory),  
+        Test.ensureTrue(File2.isDirectory(bigParentDirectory),
             "bigParentDirectory (" + bigParentDirectory + ") doesn't exist.");
-        unitTestDataDir    = setup.getString("unitTestDataDir",    "[specify <unitTestDataDir> in setup.xml]"); 
-        unitTestBigDataDir = setup.getString("unitTestBigDataDir", "[specify <unitTestBigDataDir> in setup.xml]"); 
+        unitTestDataDir    = setup.getString("unitTestDataDir",    "[specify <unitTestDataDir> in setup.xml]");
+        unitTestBigDataDir = setup.getString("unitTestBigDataDir", "[specify <unitTestBigDataDir> in setup.xml]");
         unitTestDataDir    = File2.addSlash(unitTestDataDir);
         unitTestBigDataDir = File2.addSlash(unitTestBigDataDir);
         String2.unitTestDataDir    = unitTestDataDir;
@@ -1451,16 +1451,16 @@ public static boolean developmentMode = false;
         if (emailEverythingToCsv.length() > 0)
             for (int i = 0; i < tsar.length; i++)
                 if (!String2.isEmailAddress(tsar[i]) || tsar[i].startsWith("your.")) //prohibit the default email addresses
-                    throw new RuntimeException("setup.xml error: invalid email address=" + tsar[i] + 
-                        " in <emailEverythingTo>.");  
+                    throw new RuntimeException("setup.xml error: invalid email address=" + tsar[i] +
+                        " in <emailEverythingTo>.");
         emailSubscriptionsFrom = tsar.length > 0? tsar[0] : ""; //won't be null
 
         tsar = String2.split(emailDailyReportToCsv, ',');
         if (emailDailyReportToCsv.length() > 0)
             for (int i = 0; i < tsar.length; i++)
                 if (!String2.isEmailAddress(tsar[i]) || tsar[i].startsWith("your.")) //prohibit the default email addresses
-                    throw new RuntimeException("setup.xml error: invalid email address=" + tsar[i] + 
-                        " in <emailDailyReportTo>.");  
+                    throw new RuntimeException("setup.xml error: invalid email address=" + tsar[i] +
+                        " in <emailDailyReportTo>.");
 
         //test of email
         //Test.error("This is a test of emailing an error in Erddap constructor.");
@@ -1469,7 +1469,7 @@ public static boolean developmentMode = false;
 
         //*** set up directories  //all with slashes at end
         //before 2011-12-30, was fullDatasetInfoDirectory datasetInfo/; see conversion below
-        fullDatasetDirectory     = bigParentDirectory + "dataset/";  
+        fullDatasetDirectory     = bigParentDirectory + "dataset/";
         fullCacheDirectory       = bigParentDirectory + "cache/";
         fullResetFlagDirectory   = bigParentDirectory + "flag/";
         fullHardFlagDirectory    = bigParentDirectory + "hardFlag/";
@@ -1477,11 +1477,11 @@ public static boolean developmentMode = false;
         fullCopyDirectory        = bigParentDirectory + "copy/";
         fullLuceneDirectory      = bigParentDirectory + "lucene/";
 
-        Test.ensureTrue(File2.isDirectory(fullPaletteDirectory),  
+        Test.ensureTrue(File2.isDirectory(fullPaletteDirectory),
             "fullPaletteDirectory (" + fullPaletteDirectory + ") doesn't exist.");
         errorInMethod = "ERROR while creating directories: "; //File2.makeDir throws exception if failure
         File2.makeDirectory(fullPublicDirectory);  //make it, because Git doesn't track empty dirs
-        File2.makeDirectory(fullDatasetDirectory); 
+        File2.makeDirectory(fullDatasetDirectory);
         File2.makeDirectory(fullCacheDirectory);
         File2.makeDirectory(fullResetFlagDirectory);
         File2.makeDirectory(fullHardFlagDirectory);
@@ -1497,13 +1497,13 @@ public static boolean developmentMode = false;
         //are bufferedImages hardware accelerated?
         String2.log(SgtUtil.isBufferedImageAccelerated());
 
-        //2011-12-30 convert /datasetInfo/[datasetID]/ to 
+        //2011-12-30 convert /datasetInfo/[datasetID]/ to
         //                   /dataset/[last2char]/[datasetID]/
         //to prepare for huge number of datasets
         String oldBaseDir = bigParentDirectory + "datasetInfo/";   //the old name
         if (File2.isDirectory(oldBaseDir)) {
             errorInMethod = "ERROR while converting from oldBaseDir=" + oldBaseDir + ": ";
-            try { 
+            try {
                 String2.log("[[converting datasetInfo/ to dataset/");
                 String oldBaseDirList[] = (new File(oldBaseDir)).list();
                 int oldBaseDirListSize = oldBaseDirList == null? 0 : oldBaseDirList.length;
@@ -1511,7 +1511,7 @@ public static boolean developmentMode = false;
                     String odName = oldBaseDirList[od];
                     if (File2.isFile(oldBaseDir + odName)) {
                         //delete obsolete files
-                        File2.delete(oldBaseDir + odName); 
+                        File2.delete(oldBaseDir + odName);
                         continue;
                     }
                     if (!File2.isDirectory(oldBaseDir + odName)) {
@@ -1547,14 +1547,14 @@ public static boolean developmentMode = false;
         //make some subdirectories of fullCacheDirectory
         //'_' distinguishes from dataset cache dirs
         errorInMethod = "ERROR while creating directories: ";
-        fullCptCacheDirectory              = fullCacheDirectory + "_cpt/";   
-        fullPlainFileNcCacheDirectory      = fullCacheDirectory + "_plainFileNc/";   
+        fullCptCacheDirectory              = fullCacheDirectory + "_cpt/";
+        fullPlainFileNcCacheDirectory      = fullCacheDirectory + "_plainFileNc/";
         fullSgtMapTopographyCacheDirectory = fullCacheDirectory + "_SgtMapTopography/";
         fullTestCacheDirectory             = fullCacheDirectory + "_test/";
         fullWmsCacheDirectory              = fullCacheDirectory + "_wms/"; //for all-datasets WMS and subdirs for non-data layers
         File2.makeDirectory(fullCptCacheDirectory);
         File2.makeDirectory(fullPlainFileNcCacheDirectory);
-        File2.makeDirectory(fullSgtMapTopographyCacheDirectory);       
+        File2.makeDirectory(fullSgtMapTopographyCacheDirectory);
         File2.makeDirectory(fullTestCacheDirectory);
         File2.makeDirectory(fullWmsCacheDirectory);
         File2.makeDirectory(fullWmsCacheDirectory + "Land");  //includes LandMask
@@ -1562,7 +1562,7 @@ public static boolean developmentMode = false;
         File2.makeDirectory(fullWmsCacheDirectory + "LakesAndRivers");
         File2.makeDirectory(fullWmsCacheDirectory + "Nations");
         File2.makeDirectory(fullWmsCacheDirectory + "States");
-       
+
 
         //get other info from setup.xml
         errorInMethod = "ERROR while reading " + setupFileName + ": ";
@@ -1586,7 +1586,7 @@ public static boolean developmentMode = false;
         variableNameCategoryAttributeIndex =
             String2.indexOf(categoryAttributes, "variableName");
 
-        String wmsActiveString     = setup.getString("wmsActive",                  ""); 
+        String wmsActiveString     = setup.getString("wmsActive",                  "");
         wmsActive                  = String2.isSomething(wmsActiveString)? String2.parseBoolean(wmsActiveString) : true;
         wmsSampleDatasetID         = setup.getString("wmsSampleDatasetID",         wmsSampleDatasetID);
         wmsSampleVariable          = setup.getString("wmsSampleVariable",          wmsSampleVariable);
@@ -1598,91 +1598,91 @@ public static boolean developmentMode = false;
         adminInstitutionUrl        = setup.getNotNothingString("adminInstitutionUrl",        errorInMethod);
         adminIndividualName        = setup.getNotNothingString("adminIndividualName",        errorInMethod);
         adminPosition              = setup.getNotNothingString("adminPosition",              errorInMethod);
-        adminPhone                 = setup.getNotNothingString("adminPhone",                 errorInMethod); 
+        adminPhone                 = setup.getNotNothingString("adminPhone",                 errorInMethod);
         adminAddress               = setup.getNotNothingString("adminAddress",               errorInMethod);
         adminCity                  = setup.getNotNothingString("adminCity",                  errorInMethod);
-        adminStateOrProvince       = setup.getNotNothingString("adminStateOrProvince",       errorInMethod); 
+        adminStateOrProvince       = setup.getNotNothingString("adminStateOrProvince",       errorInMethod);
         adminPostalCode            = setup.getNotNothingString("adminPostalCode",            errorInMethod);
         adminCountry               = setup.getNotNothingString("adminCountry",               errorInMethod);
         adminEmail                 = setup.getNotNothingString("adminEmail",                 errorInMethod);
 
         if (adminInstitution.startsWith("Your"))
-            throw new RuntimeException("setup.xml error: invalid <adminInstitution>=" + adminInstitution);  
+            throw new RuntimeException("setup.xml error: invalid <adminInstitution>=" + adminInstitution);
         if (!adminInstitutionUrl.startsWith("http") || !String2.isUrl(adminInstitutionUrl))
-            throw new RuntimeException("setup.xml error: invalid <adminInstitutionUrl>=" + adminInstitutionUrl);  
+            throw new RuntimeException("setup.xml error: invalid <adminInstitutionUrl>=" + adminInstitutionUrl);
         if (adminIndividualName.startsWith("Your"))
-            throw new RuntimeException("setup.xml error: invalid <adminIndividualName>=" + adminIndividualName);             
+            throw new RuntimeException("setup.xml error: invalid <adminIndividualName>=" + adminIndividualName);
         //if (adminPosition.length() == 0)
-        //    throw new RuntimeException("setup.xml error: invalid <adminPosition>=" + adminPosition);             
+        //    throw new RuntimeException("setup.xml error: invalid <adminPosition>=" + adminPosition);
         if (adminPhone.indexOf("999-999") >= 0)
-            throw new RuntimeException("setup.xml error: invalid <adminPhone>=" + adminPhone);              
+            throw new RuntimeException("setup.xml error: invalid <adminPhone>=" + adminPhone);
         if (adminAddress.equals("123 Main St."))
-            throw new RuntimeException("setup.xml error: invalid <adminAddress>=" + adminAddress);  
+            throw new RuntimeException("setup.xml error: invalid <adminAddress>=" + adminAddress);
         if (adminCity.equals("Some Town"))
-            throw new RuntimeException("setup.xml error: invalid <adminCity>=" + adminCity);  
+            throw new RuntimeException("setup.xml error: invalid <adminCity>=" + adminCity);
         //if (adminStateOrProvince.length() == 0)
-        //    throw new RuntimeException("setup.xml error: invalid <adminStateOrProvince>=" + adminStateOrProvince);  
+        //    throw new RuntimeException("setup.xml error: invalid <adminStateOrProvince>=" + adminStateOrProvince);
         if (adminPostalCode.equals("99999"))
-            throw new RuntimeException("setup.xml error: invalid <adminPostalCode>=" + adminPostalCode);  
+            throw new RuntimeException("setup.xml error: invalid <adminPostalCode>=" + adminPostalCode);
         //if (adminCountry.length() == 0)
-        //    throw new RuntimeException("setup.xml error: invalid <adminCountry>=" + adminCountry);  
-        if (!String2.isEmailAddress(adminEmail) || adminEmail.startsWith("your.")) 
-            throw new RuntimeException("setup.xml error: invalid <adminEmail>=" + adminEmail);  
+        //    throw new RuntimeException("setup.xml error: invalid <adminCountry>=" + adminCountry);
+        if (!String2.isEmailAddress(adminEmail) || adminEmail.startsWith("your."))
+            throw new RuntimeException("setup.xml error: invalid <adminEmail>=" + adminEmail);
 
-        accessConstraints          = setup.getNotNothingString("accessConstraints",          errorInMethod); 
-        accessRequiresAuthorization= setup.getNotNothingString("accessRequiresAuthorization",errorInMethod); 
+        accessConstraints          = setup.getNotNothingString("accessConstraints",          errorInMethod);
+        accessRequiresAuthorization= setup.getNotNothingString("accessRequiresAuthorization",errorInMethod);
         fees                       = setup.getNotNothingString("fees",                       errorInMethod);
         keywords                   = setup.getNotNothingString("keywords",                   errorInMethod);
         legal                      = setup.getNotNothingString("legal",                      errorInMethod);
 
         units_standard             = setup.getString(          "units_standard",             "UDUNITS");
 
-        fgdcActive                 = setup.getBoolean(         "fgdcActive",                 true); 
-        iso19115Active             = setup.getBoolean(         "iso19115Active",             true); 
-        jsonldActive               = setup.getBoolean(         "jsonldActive",               true); 
+        fgdcActive                 = setup.getBoolean(         "fgdcActive",                 true);
+        iso19115Active             = setup.getBoolean(         "iso19115Active",             true);
+        jsonldActive               = setup.getBoolean(         "jsonldActive",               true);
 //until geoServicesRest is finished, it is always inactive
-geoServicesRestActive      = false; //setup.getBoolean(         "geoServicesRestActive",      false); 
-        filesActive                = setup.getBoolean(         "filesActive",                true); 
-        dataProviderFormActive     = setup.getBoolean(         "dataProviderFormActive",     true); 
-        outOfDateDatasetsActive    = setup.getBoolean(         "outOfDateDatasetsActive",    true); 
-        politicalBoundariesActive  = setup.getBoolean(         "politicalBoundariesActive",  true); 
-        wmsClientActive            = setup.getBoolean(         "wmsClientActive",            true); 
+geoServicesRestActive      = false; //setup.getBoolean(         "geoServicesRestActive",      false);
+        filesActive                = setup.getBoolean(         "filesActive",                true);
+        dataProviderFormActive     = setup.getBoolean(         "dataProviderFormActive",     true);
+        outOfDateDatasetsActive    = setup.getBoolean(         "outOfDateDatasetsActive",    true);
+        politicalBoundariesActive  = setup.getBoolean(         "politicalBoundariesActive",  true);
+        wmsClientActive            = setup.getBoolean(         "wmsClientActive",            true);
         SgtMap.drawPoliticalBoundaries = politicalBoundariesActive;
 
 //until SOS is finished, it is always inactive
-sosActive = false;//        sosActive                  = setup.getBoolean(         "sosActive",                  false); 
+sosActive = false;//        sosActive                  = setup.getBoolean(         "sosActive",                  false);
         if (sosActive) {
             sosFeatureOfInterest   = setup.getNotNothingString("sosFeatureOfInterest",       errorInMethod);
             sosStandardNamePrefix  = setup.getNotNothingString("sosStandardNamePrefix",      errorInMethod);
             sosUrnBase             = setup.getNotNothingString("sosUrnBase",                 errorInMethod);
 
             //make the sosGmlName, e.g., http://coastwatch.pfeg.noaa.gov:8080 -> gov.noaa.pfeg.coastwatch
-            sosBaseGmlName = baseUrl; 
+            sosBaseGmlName = baseUrl;
             int po = sosBaseGmlName.indexOf("//");
             if (po > 0)
                 sosBaseGmlName = sosBaseGmlName.substring(po + 2);
             po = sosBaseGmlName.indexOf(":");
             if (po > 0)
-                sosBaseGmlName = sosBaseGmlName.substring(0, po); 
+                sosBaseGmlName = sosBaseGmlName.substring(0, po);
             StringArray sbgn = new StringArray(String2.split(sosBaseGmlName, '.'));
             sbgn.reverse();
-            sosBaseGmlName = String2.toSVString(sbgn.toArray(), ".", false);     
+            sosBaseGmlName = String2.toSVString(sbgn.toArray(), ".", false);
         }
 
 //until it is finished, it is always inactive
-wcsActive = false; //setup.getBoolean(         "wcsActive",                  false); 
+wcsActive = false; //setup.getBoolean(         "wcsActive",                  false);
 
         authentication             = setup.getString(          "authentication",             "");
         datasetsRegex              = setup.getString(          "datasetsRegex",              ".*");
         drawLandMask               = setup.getString(          "drawLandMask",               null);
         if (drawLandMask == null) //2014-08-28 changed defaults below to "under". It will be in v1.48
-            drawLandMask           = setup.getString(          "drawLand",                   "under"); 
-        if (!drawLandMask.equals("under") && 
+            drawLandMask           = setup.getString(          "drawLand",                   "under");
+        if (!drawLandMask.equals("under") &&
             !drawLandMask.equals("over"))
              drawLandMask = "under"; //default
         flagKeyKey                 = setup.getNotNothingString("flagKeyKey",                 errorInMethod);
         if (flagKeyKey.toUpperCase().indexOf("CHANGE THIS") >= 0)
-              //really old default: "A stitch in time saves nine. CHANGE THIS!!!"  
+              //really old default: "A stitch in time saves nine. CHANGE THIS!!!"
               //current default:    "CHANGE THIS TO YOUR FAVORITE QUOTE"
             throw new RuntimeException(
             String2.ERROR + ": You must change the <flagKeyKey> in setup.xml to a new, unique, non-default value. " +
@@ -1703,10 +1703,11 @@ wcsActive = false; //setup.getBoolean(         "wcsActive",                  fal
         logMaxSizeMB               = Math2.minMax(1, 2000, setup.getInt("logMaxSizeMB", 20));  //2048MB=2GB
         lowResLogoImageFile        = setup.getNotNothingString("lowResLogoImageFile",        errorInMethod);
         orcidClientID              = setup.getString(          "orcidClientID",              null);
+        orcidRedirectUrl           = setup.getString(          "orcidRedirectUrl",           null);
         partialRequestMaxBytes     = setup.getInt(             "partialRequestMaxBytes",     partialRequestMaxBytes);
         partialRequestMaxCells     = setup.getInt(             "partialRequestMaxCells",     partialRequestMaxCells);
         questionMarkImageFile      = setup.getNotNothingString("questionMarkImageFile",      errorInMethod);
-        quickRestart               = setup.getBoolean(         "quickRestart",               true);      
+        quickRestart               = setup.getBoolean(         "quickRestart",               true);
         passwordEncoding           = setup.getString(          "passwordEncoding",           "UEPSHA256");
         searchEngine               = setup.getString(          "searchEngine",               "original");
 
@@ -1723,12 +1724,12 @@ wcsActive = false; //setup.getBoolean(         "wcsActive",                  fal
         if (searchEngine.equals("lucene")) {
             useLuceneSearchEngine = true;
         } else {
-            Test.ensureEqual(searchEngine, "original", 
+            Test.ensureEqual(searchEngine, "original",
                 "<searchEngine> must be \"original\" (the default) or \"lucene\".");
             useOriginalSearchEngine = true;
         }
-        
-       
+
+
         errorInMethod = "ERROR while initializing SgtGraph: ";
         sgtGraph = new SgtGraph(fontFamily);
 
@@ -1738,11 +1739,11 @@ wcsActive = false; //setup.getBoolean(         "wcsActive",                  fal
             erddapVersion);
         if (upo == -1 && erddapVersion.length() == 4 && ev > 1.8 && ev < 10) {} //it's just a number
         else if ((upo != -1 && upo != 4) ||
-            ev <= 1.8 || ev >=10 || Double.isNaN(ev) || 
+            ev <= 1.8 || ev >=10 || Double.isNaN(ev) ||
             erddapVersion.indexOf(' ') >= 0 ||
             !String2.isAsciiPrintable(erddapVersion))
             throw new SimpleException(
-                "The format of EDStatic.erddapVersion must be d.dd[_someAsciiText]. (ev=" + ev + ")");            
+                "The format of EDStatic.erddapVersion must be d.dd[_someAsciiText]. (ev=" + ev + ")");
 
         //ensure authentication setup is okay
         errorInMethod = "ERROR while checking authentication setup: ";
@@ -1753,33 +1754,39 @@ wcsActive = false; //setup.getBoolean(         "wcsActive",                  fal
             !authentication.equals("custom") &&
             !authentication.equals("email")  &&
             !authentication.equals("google") &&
-            !authentication.equals("orcid") 
+            !authentication.equals("orcid")
             //&& !authentication.equals("openid")  //OUT-OF-DATE
             )
             throw new RuntimeException(
-                "setup.xml error: authentication=" + authentication + 
+                "setup.xml error: authentication=" + authentication +
                 " must be (nothing)|custom|google|email.");  //was also "openid"  //google NOT FINISHED
         if (!authentication.equals("") && !baseHttpsUrl.startsWith("https://"))
             throw new RuntimeException(
-                "setup.xml error: " + 
-                ": For any <authentication> other than \"\", the baseHttpsUrl=" + baseHttpsUrl + 
+                "setup.xml error: " +
+                ": For any <authentication> other than \"\", the baseHttpsUrl=" + baseHttpsUrl +
                 " must start with \"https://\".");
         if (authentication.equals("google") && !String2.isSomething(googleClientID))
             throw new RuntimeException(
-                "setup.xml error: " + 
+                "setup.xml error: " +
                 ": When authentication=google, you must provide your <googleClientID>.");
-        if (authentication.equals("orcid") && !String2.isSomething(orcidClientID))
-            throw new RuntimeException(
-                "setup.xml error: " + 
-                ": When authentication=orcid, you must provide your <orcidClientID>.");
+        if (authentication.equals("orcid")) {
+            if (!String2.isSomething(orcidClientID))
+                throw new RuntimeException(
+                    "setup.xml error: " +
+                    ": When authentication=orcid, you must provide your <orcidClientID>.");
+            if (!String2.isSomething(orcidRedirectUrl))
+                throw new RuntimeException(
+                    "setup.xml error: " +
+                    ": When authentication=orcid, you must provide your <orcidRedirectUrl>.");
+        }
         if (authentication.equals("custom") &&
             (!passwordEncoding.equals("MD5") &&
              !passwordEncoding.equals("UEPMD5") &&
              !passwordEncoding.equals("SHA256") &&
              !passwordEncoding.equals("UEPSHA256")))
             throw new RuntimeException(
-                "setup.xml error: When authentication=custom, passwordEncoding=" + passwordEncoding + 
-                " must be MD5|UEPMD5|SHA256|UEPSHA256.");  
+                "setup.xml error: When authentication=custom, passwordEncoding=" + passwordEncoding +
+                " must be MD5|UEPMD5|SHA256|UEPSHA256.");
         //String2.log("authentication=" + authentication);
 
 
@@ -1787,8 +1794,8 @@ wcsActive = false; //setup.getBoolean(         "wcsActive",                  fal
         erddapUrl          = baseUrl        + "/" + warName;
         erddapHttpsUrl     = baseHttpsUrl   + "/" + warName;
         preferredErddapUrl = baseHttpsUrl.startsWith("https://")? erddapHttpsUrl : erddapUrl;
-        imageDirUrl        = erddapUrl      + "/" + IMAGES_DIR;   
-        imageDirHttpsUrl   = erddapHttpsUrl + "/" + IMAGES_DIR;   
+        imageDirUrl        = erddapUrl      + "/" + IMAGES_DIR;
+        imageDirHttpsUrl   = erddapHttpsUrl + "/" + IMAGES_DIR;
         //downloadDirUrl   = erddapUrl      + "/" + DOWNLOAD_DIR;  //if uncommented, you need downloadDirHttpsUrl too
 
         //???if logoImgTag is needed, convert to method logoImgTag(loggedInAs)
@@ -1796,10 +1803,10 @@ wcsActive = false; //setup.getBoolean(         "wcsActive",                  fal
         //    "alt=\"logo\" title=\"logo\">\n";
 
 
-        
+
         //**** messages.xml *************************************************************
         //read static messages from messages(2).xml in contentDirectory?
-        String messagesFileName = contentDirectory + 
+        String messagesFileName = contentDirectory +
             "messages" + (developmentMode? "2" : "") + ".xml";
         if (File2.isFile(messagesFileName)) {
             String2.log("Using custom messages.xml from " + messagesFileName);
@@ -1997,7 +2004,7 @@ wcsActive = false; //setup.getBoolean(         "wcsActive",                  fal
         dtSubset                   = messages.getNotNothingString("dtSubset",                   errorInMethod);
         dtWCS                      = messages.getNotNothingString("dtWCS",                      errorInMethod);
         dtWMS                      = messages.getNotNothingString("dtWMS",                      errorInMethod);
-        
+
         EDDDatasetID               = messages.getNotNothingString("EDDDatasetID",               errorInMethod);
         EDDFgdc                    = messages.getNotNothingString("EDDFgdc",                    errorInMethod);
         EDDFgdcMetadata            = messages.getNotNothingString("EDDFgdcMetadata",            errorInMethod);
@@ -2104,7 +2111,7 @@ wcsActive = false; //setup.getBoolean(         "wcsActive",                  fal
         EDDGridDataValueExampleHA  = XML.encodeAsHTMLAttribute(SSR.psuedoPercentEncode(EDDGridDataValueExample));
         EDDGridDataTimeExampleHA   = XML.encodeAsHTMLAttribute(SSR.psuedoPercentEncode(EDDGridDataTimeExample));
         EDDGridGraphExampleHA      = XML.encodeAsHTMLAttribute(SSR.psuedoPercentEncode(EDDGridGraphExample));
-        EDDGridMapExampleHA        = XML.encodeAsHTMLAttribute(SSR.psuedoPercentEncode(EDDGridMapExample)); 
+        EDDGridMapExampleHA        = XML.encodeAsHTMLAttribute(SSR.psuedoPercentEncode(EDDGridMapExample));
 
 
         EDDTableConstraints        = messages.getNotNothingString("EDDTableConstraints",        errorInMethod);
@@ -2264,7 +2271,7 @@ wcsActive = false; //setup.getBoolean(         "wcsActive",                  fal
         generatedAt                = messages.getNotNothingString("generatedAt",                errorInMethod);
         geoServicesDescription     = messages.getNotNothingString("geoServicesDescription",     errorInMethod);
         getStartedHtml             = messages.getNotNothingString("getStartedHtml",             errorInMethod);
-        TableWriterHtmlTable.htmlTableMaxMB     = messages.getInt("htmlTableMaxMB", TableWriterHtmlTable.htmlTableMaxMB);                                   
+        TableWriterHtmlTable.htmlTableMaxMB     = messages.getInt("htmlTableMaxMB", TableWriterHtmlTable.htmlTableMaxMB);
         htmlTableMaxMessage        = messages.getNotNothingString("htmlTableMaxMessage",        errorInMethod);
         imageDataCourtesyOf        = messages.getNotNothingString("imageDataCourtesyOf",        errorInMethod);
         imageWidths                = String2.toIntArray(String2.split(messages.getNotNothingString("imageWidths",  errorInMethod), ','));
@@ -2391,9 +2398,9 @@ wcsActive = false; //setup.getBoolean(         "wcsActive",                  fal
         magGSYAscendingTooltip     = messages.getNotNothingString("magGSYAscendingTooltip",     errorInMethod);
         magGSYAxisMin              = messages.getNotNothingString("magGSYAxisMin",              errorInMethod);
         magGSYAxisMax              = messages.getNotNothingString("magGSYAxisMax",              errorInMethod);
-        magGSYRangeMinTooltip      = messages.getNotNothingString("magGSYRangeMinTooltip",      errorInMethod); 
+        magGSYRangeMinTooltip      = messages.getNotNothingString("magGSYRangeMinTooltip",      errorInMethod);
         magGSYRangeMaxTooltip      = messages.getNotNothingString("magGSYRangeMaxTooltip",      errorInMethod);
-        magGSYRangeTooltip         = messages.getNotNothingString("magGSYRangeTooltip",         errorInMethod);        
+        magGSYRangeTooltip         = messages.getNotNothingString("magGSYRangeTooltip",         errorInMethod);
         magItemFirst               = messages.getNotNothingString("magItemFirst",               errorInMethod);
         magItemPrevious            = messages.getNotNothingString("magItemPrevious",            errorInMethod);
         magItemNext                = messages.getNotNothingString("magItemNext",                errorInMethod);
@@ -2536,7 +2543,7 @@ wcsActive = false; //setup.getBoolean(         "wcsActive",                  fal
         queryErrorLastExpected     = messages.getNotNothingString("queryErrorLastExpected",     errorInMethod);
         queryErrorLastUnexpected   = messages.getNotNothingString("queryErrorLastUnexpected",   errorInMethod);
         queryErrorLastPMInvalid    = messages.getNotNothingString("queryErrorLastPMInvalid",    errorInMethod);
-        queryErrorLastPMInteger    = messages.getNotNothingString("queryErrorLastPMInteger",    errorInMethod);        
+        queryErrorLastPMInteger    = messages.getNotNothingString("queryErrorLastPMInteger",    errorInMethod);
         rangesFromTo               = messages.getNotNothingString("rangesFromTo",               errorInMethod);
         requestFormatExamplesHtml  = messages.getNotNothingString("requestFormatExamplesHtml",  errorInMethod);
         resetTheForm               = messages.getNotNothingString("resetTheForm",               errorInMethod);
@@ -2565,9 +2572,9 @@ wcsActive = false; //setup.getBoolean(         "wcsActive",                  fal
         selectPrevious             = messages.getNotNothingString("selectPrevious",             errorInMethod);
         seeProtocolDocumentation   = messages.getNotNothingString("seeProtocolDocumentation",   errorInMethod);
         sosDescriptionHtml         = messages.getNotNothingString("sosDescriptionHtml",         errorInMethod);
-        sosLongDescriptionHtml     = messages.getNotNothingString("sosLongDescriptionHtml",     errorInMethod); 
-        sparqlP01toP02pre          = messages.getNotNothingString("sparqlP01toP02pre",          errorInMethod); 
-        sparqlP01toP02post         = messages.getNotNothingString("sparqlP01toP02post",         errorInMethod); 
+        sosLongDescriptionHtml     = messages.getNotNothingString("sosLongDescriptionHtml",     errorInMethod);
+        sparqlP01toP02pre          = messages.getNotNothingString("sparqlP01toP02pre",          errorInMethod);
+        sparqlP01toP02post         = messages.getNotNothingString("sparqlP01toP02post",         errorInMethod);
         ssUse                      = messages.getNotNothingString("ssUse",                      errorInMethod);
         ssUsePlain                 = XML.removeHTMLTags(ssUse);
         ssBePatient                = messages.getNotNothingString("ssBePatient",                errorInMethod);
@@ -2682,7 +2689,7 @@ wcsActive = false; //setup.getBoolean(         "wcsActive",                  fal
         subsetViewDistinctDataTooltip      = messages.getNotNothingString("subsetViewDistinctDataTooltip",      errorInMethod);
         subsetViewRelatedDataCountsTooltip = messages.getNotNothingString("subsetViewRelatedDataCountsTooltip", errorInMethod);
         subsetViewRelatedDataTooltip       = messages.getNotNothingString("subsetViewRelatedDataTooltip",       errorInMethod);
-        subsetWarn                 = messages.getNotNothingString("subsetWarn",                 errorInMethod);                    
+        subsetWarn                 = messages.getNotNothingString("subsetWarn",                 errorInMethod);
         subsetWarn10000            = messages.getNotNothingString("subsetWarn10000",            errorInMethod);
         subsetTooltip              = messages.getNotNothingString("subsetTooltip",              errorInMethod);
         subsetNotSetUp             = messages.getNotNothingString("subsetNotSetUp",             errorInMethod);
@@ -2703,11 +2710,11 @@ wcsActive = false; //setup.getBoolean(         "wcsActive",                  fal
         gov.noaa.pfel.erddap.dataset.WaitThenTryAgainException.waitThenTryAgain = waitThenTryAgain;
         warning                    = messages.getNotNothingString("warning",                    errorInMethod);
         wcsDescriptionHtml         = messages.getNotNothingString("wcsDescriptionHtml",         errorInMethod);
-        wcsLongDescriptionHtml     = messages.getNotNothingString("wcsLongDescriptionHtml",     errorInMethod); 
+        wcsLongDescriptionHtml     = messages.getNotNothingString("wcsLongDescriptionHtml",     errorInMethod);
         wmsDescriptionHtml         = messages.getNotNothingString("wmsDescriptionHtml",         errorInMethod);
-        wmsInstructions            = messages.getNotNothingString("wmsInstructions",            errorInMethod); 
-        wmsLongDescriptionHtml     = messages.getNotNothingString("wmsLongDescriptionHtml",     errorInMethod); 
-        wmsManyDatasets            = messages.getNotNothingString("wmsManyDatasets",            errorInMethod); 
+        wmsInstructions            = messages.getNotNothingString("wmsInstructions",            errorInMethod);
+        wmsLongDescriptionHtml     = messages.getNotNothingString("wmsLongDescriptionHtml",     errorInMethod);
+        wmsManyDatasets            = messages.getNotNothingString("wmsManyDatasets",            errorInMethod);
 
         Test.ensureEqual(imageWidths.length,  3, "imageWidths.length must be 3.");
         Test.ensureEqual(imageHeights.length, 3, "imageHeights.length must be 3.");
@@ -2725,19 +2732,19 @@ wcsActive = false; //setup.getBoolean(         "wcsActive",                  fal
             Test.ensureTrue( String2.isSomething(tUpdateUrls[ i3]),   "updateUrls line #" + (i3 + 0) + " is empty.");
             Test.ensureTrue( String2.isSomething(tUpdateUrls[ i3+1]), "updateUrls line #" + (i3 + 0) + " is empty.");
             Test.ensureEqual(tUpdateUrls[i3+2], "", "updateUrls line #" + (i3 + 0) + " isn't empty.");
-        }       
+        }
 
         for (int p = 0; p < palettes.length; p++) {
             String tName = fullPaletteDirectory + palettes[p] + ".cpt";
             Test.ensureTrue(File2.isFile(tName),
-                "\"" + palettes[p] + 
+                "\"" + palettes[p] +
                 "\" is listed in <palettes>, but there is no file " + tName);
         }
 
         //try to create an nc4 file
 accessibleViaNC4 = ".nc4 is not yet supported.";
 /* DISABLED until nc4 is thread safe -- next netcdf-java
-        String testNc4Name = fullTestCacheDirectory + 
+        String testNc4Name = fullTestCacheDirectory +
             "testNC4_" + Calendar2.getCompactCurrentISODateTimeStringLocal() + ".nc";
         //String2.log("testNc4Name=" + testNc4Name);
         try {
@@ -2746,11 +2753,11 @@ accessibleViaNC4 = ".nc4 is not yet supported.";
             try {
                 Group rootGroup = nc.addGroup(null, "");
                 nc.setFill(false);
-            
+
                 int nRows = 4;
                 Dimension dimension  = nc.addDimension(rootGroup, "row", nRows);
-                Variable var = nc.addVariable(rootGroup, "myLongs", 
-                    DataType.getType(long.class), Arrays.asList(dimension)); 
+                Variable var = nc.addVariable(rootGroup, "myLongs",
+                    DataType.getType(long.class), Arrays.asList(dimension));
 
                 //leave "define" mode
                 nc.create();  //error is thrown here if netcdf-c not found
@@ -2786,10 +2793,10 @@ accessibleViaNC4 = ".nc4 is not yet supported.";
 //        File2.delete(testNc4Name);
 */
 
-        ampLoginInfoPo = startBodyHtml.indexOf(ampLoginInfo); 
+        ampLoginInfoPo = startBodyHtml.indexOf(ampLoginInfo);
         //String2.log("ampLoginInfoPo=" + ampLoginInfoPo);
 
-        searchHintsTooltip = 
+        searchHintsTooltip =
             "<div class=\"standard_max_width\">" +
             searchHintsTooltip + "\n" +
             (useLuceneSearchEngine? searchHintsLuceneTooltip : searchHintsOriginalTooltip) +
@@ -2802,25 +2809,25 @@ accessibleViaNC4 = ".nc4 is not yet supported.";
         convertFipsCountyService = MessageFormat.format(convertFipsCountyService, erddapUrl) + "\n";
         convertKeywordsService   = MessageFormat.format(convertKeywordsService,   erddapUrl) + "\n";
         convertTimeNotes         = MessageFormat.format(convertTimeNotes,         erddapUrl, convertTimeUnitsHelp) + "\n";
-        convertTimeService       = MessageFormat.format(convertTimeService,       erddapUrl) + "\n"; 
+        convertTimeService       = MessageFormat.format(convertTimeService,       erddapUrl) + "\n";
         convertUnitsFilter       = MessageFormat.format(convertUnitsFilter,       erddapUrl, units_standard) + "\n";
-        convertUnitsService      = MessageFormat.format(convertUnitsService,      erddapUrl) + "\n"; 
+        convertUnitsService      = MessageFormat.format(convertUnitsService,      erddapUrl) + "\n";
 
         //standardContact is used by legal
         String tEmail = SSR.getSafeEmailAddress(adminEmail);
-        filesDocumentation = String2.replaceAll(filesDocumentation, "&adminEmail;", tEmail); 
+        filesDocumentation = String2.replaceAll(filesDocumentation, "&adminEmail;", tEmail);
         standardContact    = String2.replaceAll(standardContact,    "&adminEmail;", tEmail);
-        legal = String2.replaceAll(legal,"[standardContact]",                   standardContact                   + "\n\n"); 
-        legal = String2.replaceAll(legal,"[standardDataLicenses]",              standardDataLicenses              + "\n\n"); 
-        legal = String2.replaceAll(legal,"[standardDisclaimerOfExternalLinks]", standardDisclaimerOfExternalLinks + "\n\n"); 
-        legal = String2.replaceAll(legal,"[standardDisclaimerOfEndorsement]",   standardDisclaimerOfEndorsement   + "\n\n"); 
-        legal = String2.replaceAll(legal,"[standardPrivacyPolicy]",             standardPrivacyPolicy             + "\n\n"); 
+        legal = String2.replaceAll(legal,"[standardContact]",                   standardContact                   + "\n\n");
+        legal = String2.replaceAll(legal,"[standardDataLicenses]",              standardDataLicenses              + "\n\n");
+        legal = String2.replaceAll(legal,"[standardDisclaimerOfExternalLinks]", standardDisclaimerOfExternalLinks + "\n\n");
+        legal = String2.replaceAll(legal,"[standardDisclaimerOfEndorsement]",   standardDisclaimerOfEndorsement   + "\n\n");
+        legal = String2.replaceAll(legal,"[standardPrivacyPolicy]",             standardPrivacyPolicy             + "\n\n");
 
         loginProblems      = String2.replaceAll(loginProblems,      "&cookiesHelp;",   cookiesHelp);
-        loginProblems      = String2.replaceAll(loginProblems,      "&adminContact;",  adminContact()) + "\n\n"; 
-        loginProblemsAfter = String2.replaceAll(loginProblemsAfter, "&adminContact;",  adminContact()) + "\n\n"; 
-        loginPublicAccess += "\n"; 
-        logoutSuccess += "\n"; 
+        loginProblems      = String2.replaceAll(loginProblems,      "&adminContact;",  adminContact()) + "\n\n";
+        loginProblemsAfter = String2.replaceAll(loginProblemsAfter, "&adminContact;",  adminContact()) + "\n\n";
+        loginPublicAccess += "\n";
+        logoutSuccess += "\n";
 
         doWithGraphs = String2.replaceAll(doWithGraphs, "&ssUse;", slideSorterActive? ssUse : "");
 
@@ -2836,7 +2843,7 @@ accessibleViaNC4 = ".nc4 is not yet supported.";
         theShortDescriptionHtml = String2.replaceAll(theShortDescriptionHtml, "&resultsFormatExamplesHtml;",    resultsFormatExamplesHtml);
 
         try {
-            computerName = System.getenv("COMPUTERNAME");  //windows 
+            computerName = System.getenv("COMPUTERNAME");  //windows
             if (computerName == null)
                 computerName = System.getenv("HOSTNAME");  //linux
             if (computerName == null)
@@ -2851,31 +2858,31 @@ accessibleViaNC4 = ".nc4 is not yet supported.";
         }
 
 
-        //**************************************************************** 
+        //****************************************************************
         //other initialization
 
         //trigger CfToGcmd initialization to ensure CfToGcmd.txt file is valid.
         String testCfToGcmd[] = CfToFromGcmd.cfToGcmd("sea_water_temperature");
-        Test.ensureTrue(testCfToGcmd.length > 0, 
+        Test.ensureTrue(testCfToGcmd.length > 0,
             "testCfToGcmd=" + String2.toCSSVString(testCfToGcmd));
 
         //successfully finished
         String2.log("*** " + erdStartup + " finished successfully." + eol);
 
     } catch (Throwable t) {
-        errorInMethod = "ERROR during " + erdStartup + ":\n" + 
-            errorInMethod + "\n" + 
+        errorInMethod = "ERROR during " + erdStartup + ":\n" +
+            errorInMethod + "\n" +
             MustBe.throwableToString(t);
         System.out.println(errorInMethod);
-//        if (String2.logFileName() != null) 
+//        if (String2.logFileName() != null)
 //            String2.log(errorInMethod);
 //        String2.returnLoggingToSystemOut();
         throw new RuntimeException(errorInMethod);
     }
 
     }
-  
-    /** 
+
+    /**
      * If loggedInAs is null, this returns baseUrl, else baseHttpsUrl
      *  (neither has slash at end).
      *
@@ -2887,7 +2894,7 @@ accessibleViaNC4 = ".nc4 is not yet supported.";
         return loggedInAs == null? baseUrl : baseHttpsUrl; //works because of loggedInAsHttps
     }
 
-    /** 
+    /**
      * If loggedInAs is null, this returns erddapUrl, else erddapHttpsUrl
      *  (neither has slash at end).
      *
@@ -2899,7 +2906,7 @@ accessibleViaNC4 = ".nc4 is not yet supported.";
         return loggedInAs == null? erddapUrl : erddapHttpsUrl;  //works because of loggedInAsHttps
     }
 
-    /** 
+    /**
      * If loggedInAs is null, this returns imageDirUrl, else imageDirHttpsUrl
      *  (with slash at end).
      *
@@ -2911,42 +2918,42 @@ accessibleViaNC4 = ".nc4 is not yet supported.";
         return loggedInAs == null? imageDirUrl : imageDirHttpsUrl; //works because of loggedInAsHttps
     }
 
-    /** 
-     * This returns the html needed to display the external.png image 
+    /**
+     * This returns the html needed to display the external.png image
      * with the warning that the link is to an external web site.
      *
      * @param tErddapUrl
      * @return the html needed to display the external.png image and messages.
      */
     public static String externalLinkHtml(String tErddapUrl) {
-        return 
+        return
             "<img\n" +
             "    src=\"" + tErddapUrl + "/images/external.png\" " +
-                "alt=\"" + externalLink + "\"\n" + 
+                "alt=\"" + externalLink + "\"\n" +
             "    title=\"" + externalWebSite + "\">";
     }
 
     /**
-     * This is used by html web page generating methods to 
+     * This is used by html web page generating methods to
      * return the You Are Here html for ERDDAP.
-     * 
+     *
      * @return the You Are Here html for this EDD subclass.
      */
     public static String youAreHere() {
-        return 
+        return
             "\n<h1>" + ProgramName + "</h1>\n";
     }
 
     /**
-     * This is used by html web page generating methods to 
+     * This is used by html web page generating methods to
      * return the You Are Here html for a ERDDAP/protocol.
-     * 
-     * @param loggedInAs 
+     *
+     * @param loggedInAs
      * @param protocol e.g., tabledap
      * @return the You Are Here html for this EDD subclass.
      */
     public static String youAreHere(String loggedInAs, String protocol) {
-        return 
+        return
             "\n<h1 class=\"nowrap\">" + erddapHref(erddapUrl(loggedInAs)) +
             " &gt; " + protocol + "</h1>\n";
     }
@@ -2955,18 +2962,18 @@ accessibleViaNC4 = ".nc4 is not yet supported.";
      * You may want to encode it with XML.encodeAsHTML(url)
      */
     public static String protocolUrl(String tErddapUrl, String protocol) {
-        return tErddapUrl + "/" + protocol + 
+        return tErddapUrl + "/" + protocol +
             (protocol.equals("files")? "/" : "/index.html") +
             (protocol.equals("tabledap") || protocol.equals("griddap")    ||
              protocol.equals("wms")      || protocol.equals("wcs")        ||
-             protocol.equals("info")     || protocol.equals("categorize")? 
-                "?" + defaultPIppQuery : "");            
+             protocol.equals("info")     || protocol.equals("categorize")?
+                "?" + defaultPIppQuery : "");
     }
 
     /**
-     * This is used by html web page generating methods to 
+     * This is used by html web page generating methods to
      * return the You Are Here html for ERDDAP/protocol/datasetID.
-     * 
+     *
      * @param loggedInAs
      * @param protocol e.g., tabledap  (must be the same case as in the URL so the link will work)
      * @param datasetID e.g., erdGlobecBottle
@@ -2974,7 +2981,7 @@ accessibleViaNC4 = ".nc4 is not yet supported.";
      */
     public static String youAreHere(String loggedInAs, String protocol, String datasetID) {
         String tErddapUrl = erddapUrl(loggedInAs);
-        return 
+        return
             "\n<h1 class=\"nowrap\">" + erddapHref(tErddapUrl) +
             "\n &gt; <a rel=\"contents\" " +
                 "href=\"" + XML.encodeAsHTMLAttribute(protocolUrl(tErddapUrl, protocol)) +
@@ -2983,69 +2990,69 @@ accessibleViaNC4 = ".nc4 is not yet supported.";
     }
 
     /**
-     * This is used by html web page generating methods to 
+     * This is used by html web page generating methods to
      * return the You Are Here html for ERDDAP/protocol with a helpful information.
-     * 
+     *
      * @param loggedInAs
      * @param protocol e.g., tabledap
-     * @param htmlHelp 
+     * @param htmlHelp
      * @return the You Are Here html for this EDD subclass.
      */
     public static String youAreHereWithHelp(String loggedInAs, String protocol, String htmlHelp) {
         String tErddapUrl = erddapUrl(loggedInAs);
-        return 
-            "\n<h1 class=\"nowrap\">" + erddapHref(tErddapUrl) + 
-            "\n &gt; " + protocol + 
+        return
+            "\n<h1 class=\"nowrap\">" + erddapHref(tErddapUrl) +
+            "\n &gt; " + protocol +
             "\n" + htmlTooltipImage(loggedInAs, htmlHelp) +
             "\n</h1>\n";
     }
 
     /**
-     * This is used by html web page generating methods to 
+     * This is used by html web page generating methods to
      * return the You Are Here html for ERDDAP/protocol/datasetID with a helpful information.
-     * 
+     *
      * @param loggedInAs
      * @param protocol e.g., tabledap
      * @param datasetID e.g., erdGlobecBottle
-     * @param htmlHelp 
+     * @param htmlHelp
      * @return the You Are Here html for this EDD subclass.
      */
-    public static String youAreHereWithHelp(String loggedInAs, String protocol, 
+    public static String youAreHereWithHelp(String loggedInAs, String protocol,
         String datasetID, String htmlHelp) {
 
         String tErddapUrl = erddapUrl(loggedInAs);
-        return 
-            "\n<h1 class=\"nowrap\">" + erddapHref(tErddapUrl) + 
+        return
+            "\n<h1 class=\"nowrap\">" + erddapHref(tErddapUrl) +
             "\n &gt; <a rel=\"contents\" " +
-                "href=\"" + XML.encodeAsHTMLAttribute(protocolUrl(tErddapUrl, protocol)) + 
+                "href=\"" + XML.encodeAsHTMLAttribute(protocolUrl(tErddapUrl, protocol)) +
                 "\">" + protocol + "</a>" +
-            "\n &gt; " + datasetID + 
-            "\n" + htmlTooltipImage(loggedInAs, htmlHelp) + 
+            "\n &gt; " + datasetID +
+            "\n" + htmlTooltipImage(loggedInAs, htmlHelp) +
             "\n</h1>\n";
     }
 
     /** THIS IS NO LONGER USED
-     * This is used by html web page generating methods to 
+     * This is used by html web page generating methods to
      * return the You Are Here html for ERDDAP/{protocol}/{attribute}/{category}.
      * IF REVIVED, append current ?page=x&amp;itemsPerPage=y
-     * 
+     *
      * @param loggedInAs
      * @param protocol e.g., categorize
      * @param attribute e.g., ioos_category
      * @param category e.g., Temperature
      * @return the You Are Here html for this EDD subclass.
      */
-    /*public static String youAreHere(String loggedInAs, String protocol, 
+    /*public static String youAreHere(String loggedInAs, String protocol,
         String attribute, String category) {
 
         String tErddapUrl = erddapUrl(loggedInAs);
         String attributeUrl = tErddapUrl + "/" + protocol + "/" + attribute + "/index.html"; //+?defaultPIppQuery
-        return 
-            "\n<h1>" + erddapHref(tErddapUrl) + 
-            "\n &gt; <a href=\"" + XML.encodeAsHTMLAttribute(protocolUrl(tErddapUrl, protocol)) + 
+        return
+            "\n<h1>" + erddapHref(tErddapUrl) +
+            "\n &gt; <a href=\"" + XML.encodeAsHTMLAttribute(protocolUrl(tErddapUrl, protocol)) +
                 "\">" + protocol + "</a>" +
             "\n &gt; <a href=\"" + XML.encodeAsHTMLAttribute(attributeUrl) + "\">" + attribute + "</a>" +
-            "\n &gt; " + category + 
+            "\n &gt; " + category +
             "\n</h1>\n";
     }*/
 
@@ -3059,7 +3066,7 @@ accessibleViaNC4 = ".nc4 is not yet supported.";
      */
     public static String htmlTooltipImage(String loggedInAs, String html) {
         return HtmlWidgets.htmlTooltipImage(
-            imageDirUrl(loggedInAs) + questionMarkImageFile, "?", html, ""); 
+            imageDirUrl(loggedInAs) + questionMarkImageFile, "?", html, "");
     }
 
     /**
@@ -3068,43 +3075,43 @@ accessibleViaNC4 = ".nc4 is not yet supported.";
      *
      * @param edv from an EDDTable
      */
-    public static String htmlTooltipImageEDV(String loggedInAs, EDV edv) 
+    public static String htmlTooltipImageEDV(String loggedInAs, EDV edv)
         throws Throwable {
 
         return htmlTooltipImageLowEDV(loggedInAs,
-            edv.destinationDataTypeClass(), 
-            edv.destinationName(), 
+            edv.destinationDataTypeClass(),
+            edv.destinationName(),
             edv.combinedAttributes());
     }
 
     /**
-     * This returns the html to draw a question mark that has big html tooltip 
+     * This returns the html to draw a question mark that has big html tooltip
      * for an EDDGrid EDV axis variable.
      *
      * @param edvga
      */
     public static String htmlTooltipImageEDVGA(String loggedInAs, EDVGridAxis edvga)
         throws Throwable {
-        
+
         return htmlTooltipImageLowEDV(loggedInAs,
-            edvga.destinationDataTypeClass(), 
+            edvga.destinationDataTypeClass(),
             edvga.destinationName() + "[" + edvga.sourceValues().size() + "]",
             edvga.combinedAttributes());
     }
 
     /**
-     * This returns the html to draw a question mark that has big html tooltip 
+     * This returns the html to draw a question mark that has big html tooltip
      * for an EDDGrid EDV data variable.
      *
      * @param edv for a grid variable
      * @param allDimString  from eddGrid.allDimString()
      */
-    public static String htmlTooltipImageEDVG(String loggedInAs, EDV edv, String allDimString) 
+    public static String htmlTooltipImageEDVG(String loggedInAs, EDV edv, String allDimString)
         throws Throwable {
 
         return htmlTooltipImageLowEDV(loggedInAs,
-            edv.destinationDataTypeClass(), 
-            edv.destinationName() + allDimString, 
+            edv.destinationDataTypeClass(),
+            edv.destinationName() + allDimString,
             edv.combinedAttributes());
     }
 
@@ -3117,19 +3124,19 @@ accessibleViaNC4 = ".nc4 is not yet supported.";
      * @param destinationName  perhaps with axis information appended (e.g., [time][latitude][longitude]
      * @param attributes
      */
-    public static String htmlTooltipImageLowEDV(String loggedInAs, Class destinationDataTypeClass, 
+    public static String htmlTooltipImageLowEDV(String loggedInAs, Class destinationDataTypeClass,
         String destinationName, Attributes attributes) throws Throwable {
 
-        String destType = 
+        String destType =
             //long and char aren't handled by getAtomicType. I don't think ever used.
-            destinationDataTypeClass == long.class? "long" :   
-            destinationDataTypeClass == char.class? "char" :  //???   
+            destinationDataTypeClass == long.class? "long" :
+            destinationDataTypeClass == char.class? "char" :  //???
             OpendapHelper.getAtomicType(destinationDataTypeClass);
 
         StringBuilder sb = OpendapHelper.dasToStringBuilder(
             destType + " " + destinationName, attributes, false); //false, do encoding below
         //String2.log("htmlTooltipImage sb=" + sb.toString());
-        return htmlTooltipImage(loggedInAs, 
+        return htmlTooltipImage(loggedInAs,
             "<div class=\"standard_max_width\">" + XML.encodeAsPreHTML(sb.toString()) +
             "</div>");
     }
@@ -3151,11 +3158,11 @@ accessibleViaNC4 = ".nc4 is not yet supported.";
      * This sends the specified email to the emailAddresses.
      * <br>This won't throw an exception if trouble.
      * <br>This method always prepends the subject and content with [erddapUrl],
-     *   so that it will be clear which ERDDAP this came from 
+     *   so that it will be clear which ERDDAP this came from
      *   (in case you administer multiple ERDDAPs).
-     * <br>This method always logs that an email was sent: to whom and the subject, 
+     * <br>This method always logs that an email was sent: to whom and the subject,
      *   but not the content.
-     * <br>This method logs all emails to the email log, e.g., 
+     * <br>This method logs all emails to the email log, e.g.,
      *   (bigParentDirectory)/emailLog2009-01.txt
      *
      * @param emailAddresses   each e.g., john.doe@company.com
@@ -3172,9 +3179,9 @@ accessibleViaNC4 = ".nc4 is not yet supported.";
         String emailAddressesCSSV = String2.toCSSVString(emailAddresses);
         String localTime = Calendar2.getCurrentISODateTimeStringLocalTZ();
         boolean logIt = !subject.startsWith(DONT_LOG_THIS_EMAIL);
-        if (!logIt) 
+        if (!logIt)
             subject = subject.substring(DONT_LOG_THIS_EMAIL.length());
-        subject = (computerName.length() > 0? computerName + " ": "") + "ERDDAP: " + 
+        subject = (computerName.length() > 0? computerName + " ": "") + "ERDDAP: " +
             String2.replaceAll(subject, '\n', ' ');
 
         //almost always write to emailLog
@@ -3190,7 +3197,7 @@ accessibleViaNC4 = ".nc4 is not yet supported.";
 
                 //close the previous file
                 if (emailLogFile != null) {
-                    try {emailLogFile.close(); 
+                    try {emailLogFile.close();
                     } catch (Throwable t) {
                     }
                     emailLogFile = null;
@@ -3198,7 +3205,7 @@ accessibleViaNC4 = ".nc4 is not yet supported.";
 
                 //open a new file
                 emailLogFile = new BufferedWriter(new FileWriter(
-                    fullLogsDirectory + "emailLog" + date + ".txt", 
+                    fullLogsDirectory + "emailLog" + date + ".txt",
                     true)); //true=append
             }
 
@@ -3206,13 +3213,13 @@ accessibleViaNC4 = ".nc4 is not yet supported.";
             //do in one write encourages threads not to intermingle   (or synchronize on emailLogFile?)
             emailLogFile.write(
 "\n==== BEGIN =====================================================================" +
-"\n     To: " + emailAddressesCSSV + 
+"\n     To: " + emailAddressesCSSV +
 "\nSubject: " + subject +  //always non-https url
-"\n   Date: " + localTime + 
+"\n   Date: " + localTime +
 "\n--------------------------------------------------------------------------------" +
 (logIt?
 "\n" + erddapUrl + " reports:" +  //always non-https url
-"\n" + content : 
+"\n" + content :
 "\n[CONFIDENTIAL]") +
 "\n==== END =======================================================================" +
 "\n");
@@ -3224,7 +3231,7 @@ accessibleViaNC4 = ".nc4 is not yet supported.";
             } catch (Throwable t2) {
             }
             if (emailLogFile != null) {
-                try {emailLogFile.close(); 
+                try {emailLogFile.close();
                 } catch (Throwable t3) {
                 }
                 emailLogFile = null;
@@ -3233,7 +3240,7 @@ accessibleViaNC4 = ".nc4 is not yet supported.";
 
         //done?
         if (emailAddressesCSSV == null || emailAddressesCSSV.length() == 0 ||
-            emailSmtpHost == null || emailSmtpHost.length() == 0) 
+            emailSmtpHost == null || emailSmtpHost.length() == 0)
             return "";
 
 
@@ -3243,19 +3250,19 @@ accessibleViaNC4 = ".nc4 is not yet supported.";
             //catch common problem: sending email to one invalid address
             if (emailAddresses.length == 1 &&
                 (!String2.isEmailAddress(emailAddresses[0]) ||
-                 emailAddresses[0].startsWith("nobody@") || 
-                 emailAddresses[0].startsWith("your.name") || 
+                 emailAddresses[0].startsWith("nobody@") ||
+                 emailAddresses[0].startsWith("your.name") ||
                  emailAddresses[0].startsWith("your.email"))) {
                 errors = "Error in EDStatic.email: invalid emailAddresses=" + emailAddressesCSSV;
                 String2.log(errors);
             }
 
             if (errors.length() == 0)
-//??? THREAD SAFE? SYNCHRONIZED? 
+//??? THREAD SAFE? SYNCHRONIZED?
 //I don't think use of this needs to be synchronized. I could be wrong. I haven't tested.
-                SSR.sendEmail(emailSmtpHost, emailSmtpPort, emailUserName, 
-                    emailPassword, emailProperties, emailFromAddress, emailAddressesCSSV, 
-                    subject, 
+                SSR.sendEmail(emailSmtpHost, emailSmtpPort, emailUserName,
+                    emailPassword, emailProperties, emailFromAddress, emailAddressesCSSV,
+                    subject,
                     erddapUrl + " reports:\n" + content); //always non-https url
         } catch (Throwable t) {
             String msg = "Error: Sending email to " + emailAddressesCSSV + " failed";
@@ -3275,7 +3282,7 @@ accessibleViaNC4 = ".nc4 is not yet supported.";
             } catch (Throwable t) {
                 String2.log(MustBe.throwable("Error: Writing to emailLog failed.", t));
                 if (emailLogFile != null) {
-                    try {emailLogFile.close(); 
+                    try {emailLogFile.close();
                     } catch (Throwable t2) {
                     }
                     emailLogFile = null;
@@ -3290,32 +3297,32 @@ accessibleViaNC4 = ".nc4 is not yet supported.";
     /**
      * This throws an exception if the requested nBytes are unlikely to be
      * available.
-     * This isn't perfect, but is better than nothing. 
+     * This isn't perfect, but is better than nothing.
      * Future: locks? synchronization? ...?
      *
      * <p>This is almost identical to Math2.ensureMemoryAvailable, but adds tallying.
      *
      * @param nBytes  size of data structure that caller plans to create
-     * @param attributeTo for the Tally system, this is the string (datasetID?) 
+     * @param attributeTo for the Tally system, this is the string (datasetID?)
      *   to which this not-enough-memory issue should be attributed.
      * @throws RuntimeException if the requested nBytes are unlikely to be available.
      */
     public static void ensureMemoryAvailable(long nBytes, String attributeTo) {
 
-        //if it is a small request, don't take the time/effort to check 
-        if (nBytes < Math2.ensureMemoryAvailableTrigger) 
+        //if it is a small request, don't take the time/effort to check
+        if (nBytes < Math2.ensureMemoryAvailableTrigger)
             return;
-        String attributeToParen = 
+        String attributeToParen =
             attributeTo == null || attributeTo.length() == 0? "" : " (" + attributeTo + ")";
-        
+
         //is the request too big under any circumstances?
         if (nBytes > Math2.maxSafeMemory) {
             tally.add("Request refused: not enough memory ever (since startup)", attributeTo);
             tally.add("Request refused: not enough memory ever (since last daily report)", attributeTo);
             throw new RuntimeException(Math2.memoryTooMuchData + "  " +
-                MessageFormat.format(Math2.memoryThanSafe, "" + (nBytes / Math2.BytesPerMB),  
+                MessageFormat.format(Math2.memoryThanSafe, "" + (nBytes / Math2.BytesPerMB),
                     "" + (Math2.maxSafeMemory / Math2.BytesPerMB)) +
-                attributeToParen); 
+                attributeToParen);
         }
 
         //request is fine without gc?
@@ -3328,14 +3335,14 @@ accessibleViaNC4 = ".nc4 is not yet supported.";
         Math2.gcAndWait();  //part of ensureMemoryAvailable: lots of memory in use
         memoryInUse = Math2.getMemoryInUse();
         if (memoryInUse + nBytes > Math2.maxSafeMemory) {
-            //eek! not enough memory! 
+            //eek! not enough memory!
             //Wait, then try gc again and hope that some other request requiring lots of memory will finish.
             //If nothing else, this 1 second delay will delay another request by same user (e.g., programmatic re-request)
             Math2.sleep(1000);
             Math2.gcAndWait(); //in ensureMemoryIsAvailable, lots of memory in use
             memoryInUse = Math2.getMemoryInUse();
         }
-        if (memoryInUse > Math2.maxSafeMemory) { 
+        if (memoryInUse > Math2.maxSafeMemory) {
             tally.add("MemoryInUse > MaxSafeMemory (since startup)", attributeTo);
             tally.add("MemoryInUse > MaxSafeMemory (since last daily report)", attributeTo);
         }
@@ -3344,29 +3351,29 @@ accessibleViaNC4 = ".nc4 is not yet supported.";
             tally.add("Request refused: not enough memory currently (since last daily report)", attributeTo);
             throw new RuntimeException(Math2.memoryTooMuchData + "  " +
                 MessageFormat.format(Math2.memoryThanCurrentlySafe,
-                    "" + (nBytes / Math2.BytesPerMB), 
+                    "" + (nBytes / Math2.BytesPerMB),
                     "" + ((Math2.maxSafeMemory - memoryInUse) / Math2.BytesPerMB)) +
-                attributeToParen); 
+                attributeToParen);
         }
     }
 
-    /** 
+    /**
      * Even if JavaBits is 64, the limit on an array size is Integer.MAX_VALUE.
      *
      * <p>This is almost identical to Math2.ensureArraySizeOkay, but adds tallying.
-     * 
+     *
      * @param tSize
-     * @param attributeTo for the Tally system, this is the string (datasetID?) 
+     * @param attributeTo for the Tally system, this is the string (datasetID?)
      *   to which this not-enough-memory issue should be attributed.
-     * @throws Exception if tSize >= Integer.MAX_VALUE.  
+     * @throws Exception if tSize >= Integer.MAX_VALUE.
      *  (equals is forbidden for safety since I often use if as missing value / trouble)
      */
-    public static void ensureArraySizeOkay(long tSize, String attributeTo) { 
+    public static void ensureArraySizeOkay(long tSize, String attributeTo) {
         if (tSize >= Integer.MAX_VALUE) {
             tally.add("Request refused: array size >= Integer.MAX_VALUE (since startup)", attributeTo);
             tally.add("Request refused: array size >= Integer.MAX_VALUE (since last daily report)", attributeTo);
             throw new RuntimeException(Math2.memoryTooMuchData + "  " +
-                MessageFormat.format(Math2.memoryArraySize, 
+                MessageFormat.format(Math2.memoryArraySize,
                     "" + tSize, "" + Integer.MAX_VALUE) +
                 (attributeTo == null || attributeTo.length() == 0? "" : " (" + attributeTo + ")"));
         }
@@ -3401,8 +3408,8 @@ accessibleViaNC4 = ".nc4 is not yet supported.";
         sb.append("Current time is " + Calendar2.getCurrentISODateTimeStringLocalTZ()  + "\n");
         sb.append("Startup was at  " + startupLocalDateTime + "\n");
         long loadTime = lastMajorLoadDatasetsStopTimeMillis - lastMajorLoadDatasetsStartTimeMillis;
-        sb.append("Last major LoadDatasets started " + Calendar2.elapsedTimeString(1000 * 
-            Math2.roundToInt((System.currentTimeMillis() - lastMajorLoadDatasetsStartTimeMillis)/1000) ) + 
+        sb.append("Last major LoadDatasets started " + Calendar2.elapsedTimeString(1000 *
+            Math2.roundToInt((System.currentTimeMillis() - lastMajorLoadDatasetsStartTimeMillis)/1000) ) +
             " ago and " +
             (loadTime < 0 ? "is still running.\n" : "finished after " + (loadTime/1000) + " seconds.\n"));
         //would be nice to know if minor LoadDataset is active, for how long
@@ -3427,10 +3434,10 @@ accessibleViaNC4 = ".nc4 is not yet supported.";
         synchronized(taskList) { //all task-related things synch on taskList
             ensureTaskThreadIsRunningIfNeeded();  //clients (like this class) are responsible for checking on it
             long tElapsedTime = taskThread == null? -1 : taskThread.elapsedTime();
-            sb.append("TaskThread has finished " + (lastFinishedTask + 1) + " out of " + 
+            sb.append("TaskThread has finished " + (lastFinishedTask + 1) + " out of " +
                 taskList.size() + " tasks.  " +
-                (tElapsedTime < 0? 
-                   "Currently, no task is running.\n" : 
+                (tElapsedTime < 0?
+                   "Currently, no task is running.\n" :
                    "The current task has been running for " + Calendar2.elapsedTimeString(tElapsedTime) + ".\n"));
         }
         sb.append("TaskThread Failed    Time (since last Daily Report)     ");
@@ -3454,7 +3461,7 @@ accessibleViaNC4 = ".nc4 is not yet supported.";
             sb.append(majorLoadDatasetsTimeSeriesSB);
             sb.append("\n\n");
         }
-        
+
         sb.append("Major LoadDatasets Times Distribution (since last Daily Report):\n");
         sb.append(String2.getDistributionStatistics(majorLoadDatasetsDistribution24)); sb.append('\n');
         sb.append("Major LoadDatasets Times Distribution (since startup):\n");
@@ -3503,17 +3510,17 @@ accessibleViaNC4 = ".nc4 is not yet supported.";
 
     }
 
-    /** 
+    /**
      * This returns the user's login name (or null if not logged in).
      *
      * <p>This relies on EDStatic.authentication
      *
-     * <p>This is safe to use this after outputStream has been written to -- 
+     * <p>This is safe to use this after outputStream has been written to --
      *     this won't make a session if the user doesn't have one.
      *
      * @param request
-     * @return null (using http), 
-     *    loggedInAsHttps (using https and not logged in), 
+     * @return null (using http),
+     *    loggedInAsHttps (using https and not logged in),
      *    or userName (using https and logged in).
      */
     public static String getLoggedInAs(HttpServletRequest request) {
@@ -3522,7 +3529,7 @@ accessibleViaNC4 = ".nc4 is not yet supported.";
 
         //request is via http? treat as not logged in
         String fullRequestUrl = request.getRequestURL().toString(); //has proxied port#, e.g. :8080
-        if (!fullRequestUrl.startsWith("https://")) 
+        if (!fullRequestUrl.startsWith("https://"))
             return null;
 
         //request is via https, but authentication=""?
@@ -3536,7 +3543,7 @@ accessibleViaNC4 = ".nc4 is not yet supported.";
         //String2.log("session=" + (session==null? "null" : session.getServletContext().getServletContextName()));
 
         if (session == null)
-            return loggedInAsHttps;  
+            return loggedInAsHttps;
 
         //session != null
         String loggedInAs = null;
@@ -3546,13 +3553,13 @@ accessibleViaNC4 = ".nc4 is not yet supported.";
             authentication.equals("orcid")) {
             loggedInAs = (String)session.getAttribute("loggedInAs:" + warName);
 
-        //} else if (authentication.equals("openid")) 
+        //} else if (authentication.equals("openid"))
         //    loggedInAs = OpenIdFilter.getCurrentUser(session);
         }
 
         //ensure printable characters only (which makes loggedInAsSuperuser special)
         return loggedInAs == null?
-            loggedInAsHttps : 
+            loggedInAsHttps :
             String2.justPrintable(loggedInAs);
     }
 
@@ -3561,9 +3568,9 @@ accessibleViaNC4 = ".nc4 is not yet supported.";
      */
     public static String nonce(String basis) {
         return String2.passwordDigest("SHA-256",
-            Math2.random(Integer.MAX_VALUE) + "_" + 
+            Math2.random(Integer.MAX_VALUE) + "_" +
             System.currentTimeMillis() + "_" +
-            basis + "_" + flagKeyKey); 
+            basis + "_" + flagKeyKey);
     }
 
     /** This allows LoadDatasets to set EDStatic.userHashMap (which is private).
@@ -3575,12 +3582,12 @@ accessibleViaNC4 = ".nc4 is not yet supported.";
     }
 
     /**
-     * This returns true if the plaintextPassword (after passwordEncoding as 
+     * This returns true if the plaintextPassword (after passwordEncoding as
      * specified in setup.xml) matches the stored password for user.
      *
      * @param username the user's log in name
      * @param plaintextPassword that the user entered on a log-in form
-     * @return true if the plaintextPassword (after passwordEncoding as 
+     * @return true if the plaintextPassword (after passwordEncoding as
      *    specified in setup.xml) matches the stored password for username.
      *    If user==null or user has no password defined in datasets.xml, this returns false.
      */
@@ -3592,15 +3599,15 @@ accessibleViaNC4 = ".nc4 is not yet supported.";
 
         Object oar[] = (Object[])userHashMap.get(username);
         if (oar == null) {
-            String2.log("username=" + username + " not found in userHashMap."); 
+            String2.log("username=" + username + " not found in userHashMap.");
             return false;
         }
         String expected = (String)oar[0]; //using passwordEncoding in setup.xml
         if (expected == null)
             return false;
 
-        //generate observedPassword from plaintextPassword via passwordEncoding 
-        String observed = plaintextPassword;  
+        //generate observedPassword from plaintextPassword via passwordEncoding
+        String observed = plaintextPassword;
         if (passwordEncoding.equals("MD5"))
             observed = String2.md5Hex(plaintextPassword); //it will be lowercase
         else if (passwordEncoding.equals("UEPMD5"))
@@ -3618,14 +3625,14 @@ accessibleViaNC4 = ".nc4 is not yet supported.";
         boolean ok = observed.equals(expected);
         if (reallyVerbose)
             String2.log("username=" + username + " password matched: " + ok);
-        return ok; 
+        return ok;
     }
 
     /**
-     * This indicates if a user is on the list of potential users 
+     * This indicates if a user is on the list of potential users
      * (i.e., there's a user tag for this user in datasets.xml).
      *
-     * @param userName the user's potential user name 
+     * @param userName the user's potential user name
      * @return true if a user is on the list of potential users
      * (i.e., there's a user tag for this user in datasets.xml).
      */
@@ -3662,53 +3669,53 @@ accessibleViaNC4 = ".nc4 is not yet supported.";
      *
      * @param loggedInAs  the name of the logged in user (or null if not logged in)
      * @param datasetID  or use "" for general login.
-     * @param graphsAccessibleToPublic From edd.graphsAccessibleToPublic(). 
+     * @param graphsAccessibleToPublic From edd.graphsAccessibleToPublic().
      *   If this is true, then this method
      *   was called because the request was for data from a dataset that
      *   allows graphics|metadata requests from the public.
      * @throws Throwable (notably ClientAbortException)
      */
-    public static void sendHttpUnauthorizedError(String loggedInAs, 
-        HttpServletResponse response, String datasetID, 
+    public static void sendHttpUnauthorizedError(String loggedInAs,
+        HttpServletResponse response, String datasetID,
         boolean graphsAccessibleToPublic) throws Throwable {
 
         String message = null;
         try {
-            tally.add("Request refused: not authorized (since startup)", datasetID); 
+            tally.add("Request refused: not authorized (since startup)", datasetID);
             tally.add("Request refused: not authorized (since last daily report)", datasetID);
 
-            if (datasetID != null && datasetID.length() > 0) 
+            if (datasetID != null && datasetID.length() > 0)
                 message = MessageFormat.format(
                     graphsAccessibleToPublic?
                         EDStatic.notAuthorizedForData :
-                        EDStatic.notAuthorized, 
-                    loggedInAsHttps.equals(loggedInAs)? "" : loggedInAs, 
+                        EDStatic.notAuthorized,
+                    loggedInAsHttps.equals(loggedInAs)? "" : loggedInAs,
                     datasetID);
 
             if (message == null)
                 response.sendError(HttpServletResponse.SC_UNAUTHORIZED);
-            else 
+            else
                 response.sendError(HttpServletResponse.SC_UNAUTHORIZED, message);
 
         } catch (Throwable t2) {
             EDStatic.rethrowClientAbortException(t2);  //first thing in catch{}
-            String2.log("Error in sendHttpUnauthorizedError:\n" + 
+            String2.log("Error in sendHttpUnauthorizedError:\n" +
                 (message == null? "" : message + "\n") +
                 MustBe.throwableToString(t2));
         }
     }
 
-    /** 
+    /**
      * This returns the session's login status html (with a link to log in/out)
      * suitable for use at the top of a web page.
      * <br>If logged in: loggedInAs | logout
      * <br>If not logged in:  login
      *
-     * <p>This is safe to use this after outputStream has been written to -- 
+     * <p>This is safe to use this after outputStream has been written to --
      *     this won't make a session if the user doesn't have one.
      *
      * @param loggedInAs  the name of the logged in user (or null if not logged in)
-     *   Special case: "loggedInAsHttps" is for using https without being logged in, 
+     *   Special case: "loggedInAsHttps" is for using https without being logged in,
      *   but &amp;loginInfo; indicates user isn't logged in.
      */
     public static String getLoginHtml(String loggedInAs) {
@@ -3719,20 +3726,20 @@ accessibleViaNC4 = ".nc4 is not yet supported.";
             return loggedInAs == null || loggedInAsHttps.equals(loggedInAs)?  //ie not logged in
                 //always use the erddapHttpsUrl for login/logout pages
                 "<a href=\"" + erddapHttpsUrl + "/login.html\">" + login + "</a>" :
-                "<a href=\"" + erddapHttpsUrl + "/login.html\"><strong>" + XML.encodeAsHTML(loggedInAs) + "</strong></a> | \n" + 
+                "<a href=\"" + erddapHttpsUrl + "/login.html\"><strong>" + XML.encodeAsHTML(loggedInAs) + "</strong></a> | \n" +
                 "<a href=\"" + erddapHttpsUrl + "/logout.html\">" + logout + "</a>";
         }
     }
 
     /**
-     * This returns the startBodyHtml (with the user's login info inserted if 
+     * This returns the startBodyHtml (with the user's login info inserted if
      * &amp;loginInfo; is present).
      *
-     * <p>This is safe to use this after outputStream has been written to -- 
+     * <p>This is safe to use this after outputStream has been written to --
      *     this won't make a session if the user doesn't have one.
      *
      * @param loggedInAs  the name of the logged in user (or null if not logged in).
-     *   Special case: "loggedInAsHttps" is for using https without being logged in, 
+     *   Special case: "loggedInAsHttps" is for using https without being logged in,
      *   but &amp;loginInfo; indicates user isn't logged in.
      */
     public static String startBodyHtml(String loggedInAs) {
@@ -3755,15 +3762,15 @@ accessibleViaNC4 = ".nc4 is not yet supported.";
     public static String startHeadHtml(          String tErddapUrl, String addToTitle) {
         String ts = startHeadHtml;
         if (addToTitle.length() > 0)
-            ts = String2.replaceAll(ts, "</title>", " - " + XML.encodeAsHTML(addToTitle) + "</title>"); 
-        return String2.replaceAll(ts,    "&erddapUrl;", tErddapUrl); 
+            ts = String2.replaceAll(ts, "</title>", " - " + XML.encodeAsHTML(addToTitle) + "</title>");
+        return String2.replaceAll(ts,    "&erddapUrl;", tErddapUrl);
         }
     public static String theLongDescriptionHtml(   String tErddapUrl) {return String2.replaceAll(theLongDescriptionHtml,  "&erddapUrl;", tErddapUrl); }
     public static String theShortDescriptionHtml(  String tErddapUrl) {return String2.replaceAll(theShortDescriptionHtml, "&erddapUrl;", tErddapUrl); }
     public static String erddapHref(               String tErddapUrl) {
         return "<a title=\"" + clickERDDAP + "\" \n" +
             "rel=\"start\" " +
-            "href=\"" + tErddapUrl + "/index.html\">" + ProgramName + "</a>"; 
+            "href=\"" + tErddapUrl + "/index.html\">" + ProgramName + "</a>";
     }
 
     /** This calls pEncode then hEncode. */
@@ -3776,7 +3783,7 @@ accessibleViaNC4 = ".nc4 is not yet supported.";
         return XML.encodeAsHTML(tUrl);
     }
 
-    /** This percent encodes &lt; and &gt; */ 
+    /** This percent encodes &lt; and &gt; */
     public static String pEncode(String tUrl) {
         tUrl = String2.replaceAll(tUrl, "<", "%3C");
         return String2.replaceAll(tUrl, ">", "%3E");
@@ -3793,30 +3800,30 @@ accessibleViaNC4 = ".nc4 is not yet supported.";
      * This also logs the error.
      *
      * <p>Note that the use of try/catch blocks and htmlForException is necessary
-     * because the outputstream is usually gzipped, so erddap can't just 
-     * catch the exception in doGet try/catch and append error message 
-     * since original outputstream and writer (which own/control the gzip stream) 
+     * because the outputstream is usually gzipped, so erddap can't just
+     * catch the exception in doGet try/catch and append error message
+     * since original outputstream and writer (which own/control the gzip stream)
      * aren't available.
      */
     public static String htmlForException(Throwable t) {
         String message = MustBe.getShortErrorMessage(t);
-        String2.log("HtmlForException is processing:\n " + 
+        String2.log("HtmlForException is processing:\n " +
             MustBe.throwableToString(t)); //log full message with stack trace
-        return 
+        return
             "<p>&nbsp;<hr>\n" +
             "<p><span class=\"warningColor\"><strong>" + errorOnWebPage + "</strong></span>\n" +
             "<pre>" + XML.encodeAsPreHTML(message, 100) +
             "</pre>\n";
     }
 
-    /** This interrupts/kill all of the thredds in runningThreads. 
+    /** This interrupts/kill all of the thredds in runningThreads.
      *  Erddap.destroy calls this when tomcat is stopped.
      */
     public static void destroy() {
         long time = System.currentTimeMillis();
         try {
             String names[] = String2.toStringArray(runningThreads.keySet().toArray());
-            String2.log("\nEDStatic.destroy will try to interrupt nThreads=" + names.length + 
+            String2.log("\nEDStatic.destroy will try to interrupt nThreads=" + names.length +
                 "\n  threadNames=" +
                 String2.toCSSVString(names));
 
@@ -3842,7 +3849,7 @@ accessibleViaNC4 = ".nc4 is not yet supported.";
                 boolean allDone = true;
                 for (int i = 0; i < names.length; i++) {
                     try {
-                        if (names[i] == null) 
+                        if (names[i] == null)
                             continue; //it has already stopped
                         Thread thread = (Thread)runningThreads.get(names[i]);
                         if (thread != null && thread.isAlive()) {
@@ -3850,13 +3857,13 @@ accessibleViaNC4 = ".nc4 is not yet supported.";
                             if (waitedSeconds > maxSeconds) {
                                 String2.log("  " + names[i] + " thread is being stop()ped!!!");
                                 thread.stop();
-                                runningThreads.remove(names[i]);  
+                                runningThreads.remove(names[i]);
                                 names[i] = null;
                             }
                         } else {
-                            String2.log("  " + names[i] + " thread recognized the interrupt in " + 
+                            String2.log("  " + names[i] + " thread recognized the interrupt in " +
                                 waitedSeconds + " s");
-                            runningThreads.remove(names[i]);  
+                            runningThreads.remove(names[i]);
                             names[i] = null;
                         }
                     } catch (Throwable t) {
@@ -3865,7 +3872,7 @@ accessibleViaNC4 = ".nc4 is not yet supported.";
                     }
                 }
                 if (allDone) {
-                    String2.log("EDStatic.destroy successfully interrupted all threads in " + 
+                    String2.log("EDStatic.destroy successfully interrupted all threads in " +
                         waitedSeconds + " s");
                     break;
                 }
@@ -3878,24 +3885,24 @@ accessibleViaNC4 = ".nc4 is not yet supported.";
             }
 
             //finally
-            if (useLuceneSearchEngine) 
-                String2.log("stopping lucene..."); 
+            if (useLuceneSearchEngine)
+                String2.log("stopping lucene...");
 
-            try { 
-                if (luceneIndexSearcher != null) luceneIndexSearcher.close(); 
+            try {
+                if (luceneIndexSearcher != null) luceneIndexSearcher.close();
             } catch (Throwable t) {}
             luceneIndexSearcher = null;
 
             try {
-                if (luceneIndexReader   != null) luceneIndexReader.close();  
+                if (luceneIndexReader   != null) luceneIndexReader.close();
             } catch (Throwable t) {}
             luceneIndexReader = null;
             luceneDatasetIDFieldCache = null;
 
             try {
-                if (luceneIndexWriter   != null) 
+                if (luceneIndexWriter   != null)
                     //indices will be thrown away, so don't make pending changes
-                    luceneIndexWriter.close(false); 
+                    luceneIndexWriter.close(false);
             } catch (Throwable t) {}
             luceneIndexWriter = null;
 
@@ -3907,7 +3914,7 @@ accessibleViaNC4 = ".nc4 is not yet supported.";
 
     /** This interrupts the thread and waits up to maxSeconds for it to finish.
      * If it still isn't finished, it is stopped.
-     * 
+     *
      */
     public static void stopThread(Thread thread, int maxSeconds) {
         try {
@@ -3952,12 +3959,12 @@ accessibleViaNC4 = ".nc4 is not yet supported.";
                 //is it stalled?
                 long eTime = taskThread.elapsedTime();
                 long maxTime = 6 * Calendar2.MILLIS_PER_HOUR; //appropriate??? user settable???
-                if (eTime > maxTime) {  
+                if (eTime > maxTime) {
 
                     //taskThread is stalled; interrupt it
                     String tError = "\n*** Error: EDStatic is interrupting a stalled taskThread (" +
-                        Calendar2.elapsedTimeString(eTime) + " > " + 
-                        Calendar2.elapsedTimeString(maxTime) + ") at " + 
+                        Calendar2.elapsedTimeString(eTime) + " > " +
+                        Calendar2.elapsedTimeString(maxTime) + ") at " +
                         Calendar2.getCurrentISODateTimeStringLocalTZ();
                     email(emailEverythingToCsv, "taskThread Stalled", tError);
                     String2.log("\n*** " + tError);
@@ -3971,7 +3978,7 @@ accessibleViaNC4 = ".nc4 is not yet supported.";
                 return true;
             } else {
                 //it isn't alive
-                String2.log("\n*** EDStatic noticed that taskThread is finished (" + 
+                String2.log("\n*** EDStatic noticed that taskThread is finished (" +
                     Calendar2.getCurrentISODateTimeStringLocalTZ() + ")\n");
                 lastFinishedTask = nextTask - 1;
                 taskThread = null;
@@ -3980,7 +3987,7 @@ accessibleViaNC4 = ".nc4 is not yet supported.";
         }
     }
 
-    /** 
+    /**
      * This ensures the task thread is running if there are tasks to do
      */
     public static void ensureTaskThreadIsRunningIfNeeded() {
@@ -3989,20 +3996,20 @@ accessibleViaNC4 = ".nc4 is not yet supported.";
                 //this checks if it is running and not stalled
                 if (isTaskThreadRunning())
                     return;
-                
+
                 //taskThread isn't running
-                //Are there no tasks to do? 
+                //Are there no tasks to do?
                 int nPending = taskList.size() - nextTask;
-                if (nPending <= 0) 
+                if (nPending <= 0)
                     return; //no need to start it
 
                 //need to start a new taskThread
                 taskThread = new TaskThread(nextTask);
-                runningThreads.put(taskThread.getName(), taskThread); 
-                String2.log("\n*** new taskThread started at " + 
+                runningThreads.put(taskThread.getName(), taskThread);
+                String2.log("\n*** new taskThread started at " +
                     Calendar2.getCurrentISODateTimeStringLocalTZ() + " nPendingTasks=" + nPending + "\n");
                 taskThread.start();
-                return;            
+                return;
             } catch (Throwable t) {
             }
         }
@@ -4026,8 +4033,8 @@ accessibleViaNC4 = ".nc4 is not yet supported.";
             //Note that all task creators check that
             //   EDStatic.lastFinishedTask >= lastAssignedTask(datasetID).  I.E., tasks are all done,
             //before again creating new tasks.
-            //So no need to see if this new task duplicates an existing unfinished task.  
-            
+            //So no need to see if this new task duplicates an existing unfinished task.
+
             //add the task to the list
             taskList.add(taskOA);
             return taskList.size() - 1;
@@ -4061,14 +4068,14 @@ accessibleViaNC4 = ".nc4 is not yet supported.";
             if (s.length() == 0 || s.startsWith("//"))
                 continue;
             int po = s.indexOf('\t');
-            if (po < 0) 
+            if (po < 0)
                 po = s.length();
             col1.add(s.substring(0, po).trim());
             col2.add(s.substring(po + 1).trim());
         }
         return table;
     }
-    
+
     /**
      * This returns the Oceanic/Atmospheric Variable Names table: col 0=variableName 1=fullName.
      * <br>varNames are all lower-case.  long_names are mostly first letter of each word capitalized.
@@ -4094,7 +4101,7 @@ accessibleViaNC4 = ".nc4 is not yet supported.";
             if (s.length() == 0 || s.startsWith("//"))
                 continue;
             int po = s.indexOf('\t');
-            if (po < 0) 
+            if (po < 0)
                 po = s.length();
             col1.add(s.substring(0, po).trim());
             col2.add(s.substring(po + 1).trim());
@@ -4119,11 +4126,11 @@ accessibleViaNC4 = ".nc4 is not yet supported.";
             //remove some really common acronyms I don't want to expand
             BitSet keep = new BitSet();
             keep.set(0, acronymSA.size());
-            String common[] = {//"DOC", "DOD", "DOE", "USDOC", "USDOD", "USDOE", 
+            String common[] = {//"DOC", "DOD", "DOE", "USDOC", "USDOD", "USDOE",
                 "NOAA", "NASA", "US"};
             for (int c = 0; c < common.length; c++) {
-                int po = acronymSA.indexOf(common[c]); 
-                if (po >= 0) 
+                int po = acronymSA.indexOf(common[c]);
+                if (po >= 0)
                     keep.clear(po);
             }
             table.justKeep(keep);
@@ -4184,7 +4191,7 @@ accessibleViaNC4 = ".nc4 is not yet supported.";
      * <br>The most official source is http://www.itl.nist.gov/fipspubs/fip6-4.htm
      *
      * <p>The table is modified from http://www.census.gov/datamap/fipslist/AllSt.txt .
-     * It includes the Appendix A and B counties from 
+     * It includes the Appendix A and B counties from
      * U.S. protectorates and county-equivalent entities of the freely associated atates
      * from http://www.itl.nist.gov/fipspubs/co-codes/states.txt .
      * I changed "lsabela" PR to "Isabela".
@@ -4195,11 +4202,11 @@ accessibleViaNC4 = ".nc4 is not yet supported.";
     public static Table fipsCountyTable() throws Exception {
         Table table = new Table();
         table.readASCII(
-            contextDirectory + "WEB-INF/classes/gov/noaa/pfel/erddap/util/FipsCounty.tsv", 
+            contextDirectory + "WEB-INF/classes/gov/noaa/pfel/erddap/util/FipsCounty.tsv",
             0, 1, "", null, null, null, null, false); //false = don't simplify
         return table;
     }
-    
+
     /**
      * This returns the complete list of CF Standard Names as a table with 1 column.
      *
@@ -4213,7 +4220,7 @@ accessibleViaNC4 = ".nc4 is not yet supported.";
         table.addColumn("CfStandardNames", sa);
         return table;
     }
-    
+
     /**
      * This returns the complete list of GCMD Science Keywords as a table with 1 column.
      *
@@ -4227,7 +4234,7 @@ accessibleViaNC4 = ".nc4 is not yet supported.";
         table.addColumn("GcmdScienceKeywords", sa);
         return table;
     }
-    
+
     /**
      * This returns the complete CF to GCMD conversion information as a table with 1 column.
      * The GCMD to CF conversion information can be derived from this.
@@ -4242,7 +4249,7 @@ accessibleViaNC4 = ".nc4 is not yet supported.";
         table.addColumn("CfToGcmd", sa);
         return table;
     }
-    
+
     /**
      * This returns true during the initial loadDatasets.
      * @return true during the initial loadDatasets, else false.
@@ -4263,7 +4270,7 @@ accessibleViaNC4 = ".nc4 is not yet supported.";
         luceneQueryParser = new QueryParser(luceneVersion, luceneDefaultField, luceneAnalyzer);
     }
 
-    /** 
+    /**
      * This creates an IndexWriter.
      * Normally, this is created once in RunLoadDatasets.
      * But if trouble, a new one will be created.
@@ -4278,18 +4285,18 @@ accessibleViaNC4 = ".nc4 is not yet supported.";
 
             //if this is being called, directory shouldn't be locked
             //see javaDocs for indexWriter.close()
-            if (IndexWriter.isLocked(luceneDirectory)) 
+            if (IndexWriter.isLocked(luceneDirectory))
                 IndexWriter.unlock(luceneDirectory);
 
             //create indexWriter
-            IndexWriterConfig lucConfig = 
+            IndexWriterConfig lucConfig =
                 new IndexWriterConfig(luceneVersion, luceneAnalyzer);
             lucConfig.setOpenMode(firstTime?
                 IndexWriterConfig.OpenMode.CREATE :
                 IndexWriterConfig.OpenMode.CREATE_OR_APPEND);
             luceneIndexWriter = new IndexWriter(luceneDirectory, lucConfig);
             luceneIndexWriter.setInfoStream(
-                verbose? new PrintStream(new String2LogOutputStream()) : null); 
+                verbose? new PrintStream(new String2LogOutputStream()) : null);
             String2.log("  createLuceneIndexWriter finished.  time=" +
                 (System.currentTimeMillis() - tTime) + "ms");
         } catch (Throwable t) {
@@ -4297,11 +4304,11 @@ accessibleViaNC4 = ".nc4 is not yet supported.";
         }
     }
 
-    /** 
+    /**
      * This returns the Lucene IndexSearcher and datasetIDFieldCache (thread-safe).
      * IndexSearch uses IndexReader (also thread-safe).
-     * IndexReader works on a snapshot of an index, 
-     * so it is recreated if flagged at end of LoadDatasetsevery 
+     * IndexReader works on a snapshot of an index,
+     * so it is recreated if flagged at end of LoadDatasetsevery
      * via needNewLuceneIndexReader.
      *
      * @return Object[2]: [0]=a luceneIndexSearcher (thread-safe), or null if trouble.
@@ -4310,7 +4317,7 @@ accessibleViaNC4 = ".nc4 is not yet supported.";
      */
     public static Object[] luceneIndexSearcher() {
 
-        //synchronize 
+        //synchronize
         synchronized (luceneIndexReaderLock) {
 
             //need a new indexReader?
@@ -4319,13 +4326,13 @@ accessibleViaNC4 = ".nc4 is not yet supported.";
                 luceneIndexSearcher == null) {
 
                 //clear out old one
-                try { 
-                    if (luceneIndexSearcher != null) luceneIndexSearcher.close(); 
+                try {
+                    if (luceneIndexSearcher != null) luceneIndexSearcher.close();
                 } catch (Throwable t) {}
                 luceneIndexSearcher = null;
 
                 try {
-                    if (luceneIndexReader   != null) luceneIndexReader.close();  
+                    if (luceneIndexReader   != null) luceneIndexReader.close();
                 } catch (Throwable t) {}
                 luceneIndexReader = null;
                 luceneDatasetIDFieldCache = null;
@@ -4337,39 +4344,39 @@ accessibleViaNC4 = ".nc4 is not yet supported.";
                     long rTime = System.currentTimeMillis();
                     luceneIndexReader = IndexReader.open(luceneDirectory); // read-only=true
                     luceneIndexSearcher = new IndexSearcher(luceneIndexReader);
-                    String2.log("  new luceneIndexReader+Searcher time=" + 
+                    String2.log("  new luceneIndexReader+Searcher time=" +
                         (System.currentTimeMillis() - rTime) + "ms");
 
                     //create the luceneDatasetIDFieldCache
-                    //save memory by sharing the canonical strings  
+                    //save memory by sharing the canonical strings
                     //(EDD.ensureValid makes datasetID's canonical)
                     rTime = System.currentTimeMillis();
-                    luceneDatasetIDFieldCache = FieldCache.DEFAULT.getStrings(luceneIndexReader, 
+                    luceneDatasetIDFieldCache = FieldCache.DEFAULT.getStrings(luceneIndexReader,
                         "datasetID");
                     int n = luceneDatasetIDFieldCache.length;
                     for (int i = 0; i < n; i++)
                         luceneDatasetIDFieldCache[i] = String2.canonical(luceneDatasetIDFieldCache[i]);
-                    String2.log("  new luceneDatasetIDFieldCache time=" + 
+                    String2.log("  new luceneDatasetIDFieldCache time=" +
                         (System.currentTimeMillis() - rTime) + "ms");
 
                     //if successful, we no longer needNewLuceneIndexReader
-                    needNewLuceneIndexReader = false;  
+                    needNewLuceneIndexReader = false;
                     //if successful, fall through
 
                 } catch (Throwable t) {
                     String subject = String2.ERROR + " while creating Lucene Searcher";
                     String msg = MustBe.throwableToString(t);
                     email(emailEverythingToCsv, subject, msg);
-                    String2.log(subject + "\n" + msg);            
+                    String2.log(subject + "\n" + msg);
 
                     //clear out old one
-                    try { 
-                        if (luceneIndexSearcher != null) luceneIndexSearcher.close(); 
+                    try {
+                        if (luceneIndexSearcher != null) luceneIndexSearcher.close();
                     } catch (Throwable t2) {}
                     luceneIndexSearcher = null;
 
                     try {
-                        if (luceneIndexReader   != null) luceneIndexReader.close();  
+                        if (luceneIndexReader   != null) luceneIndexReader.close();
                     } catch (Throwable t2) {}
                     luceneIndexReader = null;
                     luceneDatasetIDFieldCache = null;
@@ -4385,7 +4392,7 @@ accessibleViaNC4 = ".nc4 is not yet supported.";
         }
     }
 
-    /** 
+    /**
      * This parses a query with luceneQueryParser (not thread-safe).
      *
      * @param searchString  the user's searchString, but modified slightly for Lucene
@@ -4415,8 +4422,8 @@ accessibleViaNC4 = ".nc4 is not yet supported.";
      * by checking the request parameters.
      *
      * @param request
-     * @return int[2]  
-     *     [0]=page         (may be invalid, e.g., -5 or Integer.MAX_VALUE) 
+     * @return int[2]
+     *     [0]=page         (may be invalid, e.g., -5 or Integer.MAX_VALUE)
      *     [1]=itemsPerPage (may be invalid, e.g., -5 or Integer.MAX_VALUE)
      */
     public static int[] getRawRequestedPIpp(HttpServletRequest request) {
@@ -4431,9 +4438,9 @@ accessibleViaNC4 = ".nc4 is not yet supported.";
      * by checking the request parameters.
      *
      * @param request
-     * @return int[2]  
-     *     [0]=page (will be 1..., but may be too big), 
-     *     [1]=itemsPerPage (will be 1...), 
+     * @return int[2]
+     *     [0]=page (will be 1..., but may be too big),
+     *     [1]=itemsPerPage (will be 1...),
      */
     public static int[] getRequestedPIpp(HttpServletRequest request) {
 
@@ -4445,7 +4452,7 @@ accessibleViaNC4 = ".nc4 is not yet supported.";
 
         //itemsPerPage
         if (iar[1] < 1 || iar[1] == Integer.MAX_VALUE)
-            iar[1] = defaultItemsPerPage; 
+            iar[1] = defaultItemsPerPage;
 
         return iar;
     }
@@ -4469,7 +4476,7 @@ accessibleViaNC4 = ".nc4 is not yet supported.";
                 return "";
             String functionName = jsonp.substring(7); //it will be because it starts with .jsonp=
             if (!String2.isJsonpNameSafe(functionName))
-                throw new SimpleException(errorJsonpFunctionName); 
+                throw new SimpleException(errorJsonpFunctionName);
             return ".jsonp=" + SSR.minimalPercentEncode(functionName) + "&";
         } catch (Throwable t) {
             String2.log(MustBe.throwableToString(t));
@@ -4531,9 +4538,9 @@ accessibleViaNC4 = ".nc4 is not yet supported.";
      *
      * @param request
      * @param nItems e.g., total number of datasets from search results
-     * @return int[4]  
-     *     [0]=page (will be 1..., but may be too big), 
-     *     [1]=itemsPerPage (will be 1...), 
+     * @return int[4]
+     *     [0]=page (will be 1..., but may be too big),
+     *     [1]=itemsPerPage (will be 1...),
      *     [2]=startIndex (will be 0..., but may be too big),
      *     [3]=lastPage with items (will be 1...).
      *     Note that page may be greater than lastPage (caller should write error message to user).
@@ -4542,7 +4549,7 @@ accessibleViaNC4 = ".nc4 is not yet supported.";
 
         int pipp[] = getRequestedPIpp(request);
         int page = pipp[0];
-        int itemsPerPage = pipp[1]; 
+        int itemsPerPage = pipp[1];
         int startIndex = Math2.narrowToInt((page - 1) * (long)itemsPerPage); //0..
         int lastPage = Math.max(1, Math2.hiDiv(nItems, itemsPerPage));
 
@@ -4561,7 +4568,7 @@ accessibleViaNC4 = ".nc4 is not yet supported.";
             (searchFor.indexOf(' ') >= 0? searchFewerWords : "")};
     }
 
-    /** 
+    /**
      * This returns the error String[2] if page &gt; lastPage.
      *
      * @param page
@@ -4581,7 +4588,7 @@ accessibleViaNC4 = ".nc4 is not yet supported.";
      * @param page
      * @param lastPage
      * @param relevant true=most relevant first, false=sorted alphabetically
-     * @param urlWithQuery percentEncoded, but not HTML/XML encoded, 
+     * @param urlWithQuery percentEncoded, but not HTML/XML encoded,
      *    e.g., http://coastwatch.pfeg.noaa.gov/erddap/search/index.html?page=1&itemsPerPage=1000&searchFor=temperature%20wind
      * @return string with HTML content
      */
@@ -4603,10 +4610,10 @@ accessibleViaNC4 = ".nc4 is not yet supported.";
             //figure out where page number is so replaceable
             int pagePo = urlWithQuery.indexOf("?page=");
             if (pagePo < 0)
-                pagePo = urlWithQuery.indexOf("&page="); 
+                pagePo = urlWithQuery.indexOf("&page=");
             if (pagePo < 0) {
                 pagePo = urlWithQuery.length();
-                urlWithQuery += (urlWithQuery.indexOf('?') < 0? "?" : "&") + "page=" + page;                
+                urlWithQuery += (urlWithQuery.indexOf('?') < 0? "?" : "&") + "page=" + page;
             }
             int pageNumberPo = pagePo + 6;
 
@@ -4614,12 +4621,12 @@ accessibleViaNC4 = ".nc4 is not yet supported.";
             if (ampPo < 0)
                 ampPo = urlWithQuery.length();
 
-            String url1 = "&nbsp;<a href=\"" + 
+            String url1 = "&nbsp;<a href=\"" +
                           XML.encodeAsHTMLAttribute(urlWithQuery.substring(0, pageNumberPo));  // + p
-            String url2 = XML.encodeAsHTMLAttribute(urlWithQuery.substring(ampPo)) + "\">";    // + p   
-            String url3 = "</a>&nbsp;\n";        
+            String url2 = XML.encodeAsHTMLAttribute(urlWithQuery.substring(ampPo)) + "\">";    // + p
+            String url3 = "</a>&nbsp;\n";
 
-            //links, e.g. if page=5 and lastPage=12: _1 ... _4  5 _6 ... _12 
+            //links, e.g. if page=5 and lastPage=12: _1 ... _4  5 _6 ... _12
             StringBuilder sb = new StringBuilder();
             if (page >= 2)            sb.append(url1 + 1          + url2 + 1          + url3);
             if (page >= 4)            sb.append("...\n");
@@ -4631,8 +4638,8 @@ accessibleViaNC4 = ".nc4 is not yet supported.";
 
             //append to results
             results.append("&nbsp;&nbsp;" +
-                MessageFormat.format(nMatchingPage, 
-                    "" + page, "" + lastPage, sb.toString()) + 
+                MessageFormat.format(nMatchingPage,
+                    "" + page, "" + lastPage, sb.toString()) +
                 "\n");
         }
 
@@ -4645,7 +4652,7 @@ accessibleViaNC4 = ".nc4 is not yet supported.";
     }
 
 
-    /** 
+    /**
      * This updates out-of-date http: references to https: within a string.
      * This is very safe won't otherwise change the string (even "" or null).
      */
@@ -4657,7 +4664,7 @@ accessibleViaNC4 = ".nc4 is not yet supported.";
         StringBuilder sb = new StringBuilder(s);
         String2.replaceAll(sb,  //reversed in naming_authority
             "gov.noaa.pfel.",
-            "gov.noaa.pfeg."); 
+            "gov.noaa.pfeg.");
 
         if (sb.indexOf("http") < 0)
             return sb.toString();
@@ -4671,7 +4678,7 @@ accessibleViaNC4 = ".nc4 is not yet supported.";
     /**
      * This calls updateUrls for every String attribute (except EDStatic.updateUrlsSkipAttributes)
      * and writes changes to addAtts.
-     * 
+     *
      * @param sourceAtts may be null
      * @param addAtts mustn't be null.
      */
@@ -4697,10 +4704,10 @@ accessibleViaNC4 = ".nc4 is not yet supported.";
             if (pa == null && sourceAtts != null)
                 pa = sourceAtts.get(names[i]);
             if (pa != null && pa.size() > 0 && pa.elementClass() == String.class) {
-                String oValue = pa.getString(0);        
+                String oValue = pa.getString(0);
                 String value = updateUrls(oValue);
                 if (!value.equals(oValue))
-                    addAtts.set(names[i], value); 
+                    addAtts.set(names[i], value);
             }
         }
     }
@@ -4730,7 +4737,7 @@ accessibleViaNC4 = ".nc4 is not yet supported.";
      * @throws Throwable
      */
     public static void rethrowClientAbortException(Throwable t) throws Throwable {
-        if (isClientAbortException(t)) 
+        if (isClientAbortException(t))
             throw t;
     }
 
@@ -4746,7 +4753,7 @@ accessibleViaNC4 = ".nc4 is not yet supported.";
         add.set(   "sourceUrl", "http://coastwatch.pfel.noaa.gov");
         EDStatic.updateUrls(source, add);
         String results = add.toString();
-        String expected = 
+        String expected =
 "    a=https://coastwatch.pfeg.noaa.gov\n" +
 "    b=https://www.whoi.edu\n" +
 "    sourceUrl=http://coastwatch.pfel.noaa.gov\n" + //unchanged
@@ -4761,7 +4768,7 @@ accessibleViaNC4 = ".nc4 is not yet supported.";
         add.set("sourceUrl", "http://coastwatch.pfel.noaa.gov");
         EDStatic.updateUrls(null, add);
         results = add.toString();
-        expected = 
+        expected =
 "    a=https://coastwatch.pfeg.noaa.gov\n" +
 "    b=https://www.whoi.edu\n" +
 "    nine=9.0d\n" +
@@ -4769,7 +4776,7 @@ accessibleViaNC4 = ".nc4 is not yet supported.";
         Test.ensureEqual(results, expected, "results=\n" + results);
     }
 
-    /** 
+    /**
      * This tests some of the methods in this class.
      * @throws an Exception if trouble.
      */
