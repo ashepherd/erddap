@@ -613,7 +613,8 @@ public class LoadDatasets extends Thread {
                     } else {                            
                         Arrays.sort(tRoles);
                         if ("email".equals(EDStatic.authentication) ||
-                            "google".equals(EDStatic.authentication))
+                            "google".equals(EDStatic.authentication) ||
+                            "orcid".equals(EDStatic.authentication))
                             tUsername = tUsername.toLowerCase();  //so case insensitive, to avoid trouble
                         if (reallyVerbose) String2.log("user=" + tUsername + " roles=" + String2.toCSSVString(tRoles));
                         Object o = tUserHashMap.put(tUsername, new Object[]{tPassword, tRoles});
