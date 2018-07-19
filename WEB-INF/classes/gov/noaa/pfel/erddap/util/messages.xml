@@ -2459,6 +2459,15 @@ and then log in without your password at many other web sites, including ERDDAP.
 Only people who have made arrangements with the administrator of this ERDDAP may log in.
 ]]></loginDescribeOpenID>
 
+<loginDescribeOrcid><![CDATA[
+<p>This ERDDAP is configured to let you log in by signing in to your ORCiD account.
+This allows ERDDAP to verify your identity (name and email address) 
+  and access your public profile information, 
+but does not give ERDDAP access any private information.
+Anyone can log in but the administrator of this ERDDAP determines who gets 
+  access to additional datasets.
+]]></loginDescribeOrcid>
+  
 <loginCanNot>This ERDDAP is not configured to let users log in.</loginCanNot>
 <loginAreNot>You aren't logged in.</loginAreNot>
 <loginToLogIn>To log in</loginToLogIn>
@@ -2476,6 +2485,8 @@ Only people who have made arrangements with the administrator of this ERDDAP may
 <loginOpenIDCreate>Or create an OpenID URL at</loginOpenIDCreate>
 <loginOpenIDFree>They are all free!</loginOpenIDFree>
 <loginOpenIDSame>Make sure that you logged in with the exact same OpenID URL that you gave to the ERDDAP administrator.</loginOpenIDSame>
+
+<loginOrcidSignIn>Sign into your ORCiD account. (The button's label will change from "Sign in" to Signed in".)</loginOrcidSignIn>
 
 <loginAs>You are logged in as</loginAs>
 <loginFailed>ERROR: Login failed</loginFailed>
