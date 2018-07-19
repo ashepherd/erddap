@@ -954,6 +954,7 @@ public static boolean developmentMode = false;
         loginOpenIDCreate,
         loginOpenIDFree,
         loginOpenIDSame,
+        loginOrcidSignIn,
         loginAs,
         loginFailed,
         loginSucceeded,
@@ -2302,6 +2303,7 @@ wcsActive = false; //setup.getBoolean(         "wcsActive",                  fal
         loginDescribeCustom        = messages.getNotNothingString("loginDescribeCustom",        errorInMethod);
         loginDescribeEmail         = messages.getNotNothingString("loginDescribeEmail",         errorInMethod);
         loginDescribeGoogle        = messages.getNotNothingString("loginDescribeGoogle",        errorInMethod);
+        loginDescribeOrcid         = messages.getNotNothingString("loginDescribeOrcid",         errorInMethod);
         loginDescribeOpenID        = messages.getNotNothingString("loginDescribeOpenID",        errorInMethod);
         loginCanNot                = messages.getNotNothingString("loginCanNot",                errorInMethod);
         loginAreNot                = messages.getNotNothingString("loginAreNot",                errorInMethod);
@@ -2318,6 +2320,7 @@ wcsActive = false; //setup.getBoolean(         "wcsActive",                  fal
         loginOpenIDCreate          = messages.getNotNothingString("loginOpenIDCreate",          errorInMethod);
         loginOpenIDFree            = messages.getNotNothingString("loginOpenIDFree",            errorInMethod);
         loginOpenIDSame            = messages.getNotNothingString("loginOpenIDSame",            errorInMethod);
+        loginOrcidSignIn           = messages.getNotNothingString("loginOrcidSignIn",           errorInMethod);
         loginAs                    = messages.getNotNothingString("loginAs",                    errorInMethod);
         loginFailed                = messages.getNotNothingString("loginFailed",                errorInMethod);
         loginSucceeded             = messages.getNotNothingString("loginSucceeded",             errorInMethod);
