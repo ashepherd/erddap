@@ -465,6 +465,7 @@ public static boolean developmentMode = false;
         legendTitle1, 
         legendTitle2, 
         lowResLogoImageFile,
+        orcidClientID, //if authentication=orcid, this will be something
         passwordEncoding, //will be one of "MD5", "UEPMD5", "SHA256", "UEPSHA256"
         questionMarkImageFile,
         searchEngine,
@@ -1700,6 +1701,7 @@ wcsActive = false; //setup.getBoolean(         "wcsActive",                  fal
         loadDatasetsMaxMillis      = Math.max(loadDatasetsMinMillis * 2, loadDatasetsMaxMillis);
         logMaxSizeMB               = Math2.minMax(1, 2000, setup.getInt("logMaxSizeMB", 20));  //2048MB=2GB
         lowResLogoImageFile        = setup.getNotNothingString("lowResLogoImageFile",        errorInMethod);
+        orcidClientID              = setup.getString(          "orcidClientID",              null);
         partialRequestMaxBytes     = setup.getInt(             "partialRequestMaxBytes",     partialRequestMaxBytes);
         partialRequestMaxCells     = setup.getInt(             "partialRequestMaxCells",     partialRequestMaxCells);
         questionMarkImageFile      = setup.getNotNothingString("questionMarkImageFile",      errorInMethod);
@@ -1749,7 +1751,8 @@ wcsActive = false; //setup.getBoolean(         "wcsActive",                  fal
         if (!authentication.equals("") &&
             !authentication.equals("custom") &&
             !authentication.equals("email")  &&
-            !authentication.equals("google") 
+            !authentication.equals("google") &&
+            !authentication.equals("orcid") 
             //&& !authentication.equals("openid")  //OUT-OF-DATE
             )
             throw new RuntimeException(
@@ -1764,6 +1767,10 @@ wcsActive = false; //setup.getBoolean(         "wcsActive",                  fal
             throw new RuntimeException(
                 "setup.xml error: " + 
                 ": When authentication=google, you must provide your <googleClientID>.");
+        if (authentication.equals("orcid") && !String2.isSomething(orcidClientID))
+            throw new RuntimeException(
+                "setup.xml error: " + 
+                ": When authentication=orcid, you must provide your <orcidClientID>.");
         if (authentication.equals("custom") &&
             (!passwordEncoding.equals("MD5") &&
              !passwordEncoding.equals("UEPMD5") &&
@@ -3532,7 +3539,8 @@ accessibleViaNC4 = ".nc4 is not yet supported.";
         String loggedInAs = null;
         if (authentication.equals("custom") ||
             authentication.equals("email") ||
-            authentication.equals("google")) {
+            authentication.equals("google") ||
+            authentication.equals("orcid")) {
             loggedInAs = (String)session.getAttribute("loggedInAs:" + warName);
 
         //} else if (authentication.equals("openid")) 
